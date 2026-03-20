@@ -874,6 +874,35 @@
       <div style="font-size:11px;color:var(--text-muted);margin-top:10px;">タップで確認済みに切替</div>
     </div>
 
+    <!-- 自動更新スケジュール -->
+    <div class="card">
+      <h2>🤖 自動更新スケジュール</h2>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(56,189,248,0.08);border-radius:8px;border-left:3px solid var(--accent);">
+          <div style="font-size:20px;">🌅</div>
+          <div>
+            <div style="font-weight:600;font-size:13px;">朝スキャン</div>
+            <div style="font-size:11px;color:var(--text-muted);">毎日 7:00 — Gmail未返信チェック・TODO更新・FX確認</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(251,146,60,0.08);border-radius:8px;border-left:3px solid var(--orange);">
+          <div style="font-size:20px;">🌆</div>
+          <div>
+            <div style="font-weight:600;font-size:13px;">夕方リマインド</div>
+            <div style="font-size:11px;color:var(--text-muted);">毎日 18:00 — 未完了確認・期限アラート・翌日プレビュー</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(74,222,128,0.08);border-radius:8px;border-left:3px solid var(--green);">
+          <div style="font-size:20px;">📊</div>
+          <div>
+            <div style="font-weight:600;font-size:13px;">週次レビュー</div>
+            <div style="font-size:11px;color:var(--text-muted);">日曜 20:00 — 週間まとめ・翌週タスク整理</div>
+          </div>
+        </div>
+      </div>
+      <div id="last-update-log" style="font-size:11px;color:var(--text-muted);margin-top:10px;padding-top:8px;border-top:1px solid var(--border);">最終更新: —</div>
+    </div>
+
     <!-- 下書きメール -->
     <div class="card">
       <h2>下書きメール <span class="badge">3</span></h2>
@@ -1490,10 +1519,23 @@ voiceInput.addEventListener('keydown', (e) => {
 // 更新ボタン
 document.getElementById('refresh-btn').addEventListener('click', function() {
   this.classList.add('spinning');
+  // 更新時刻を記録
+  localStorage.setItem('440llc-last-update', new Date().toISOString());
   setTimeout(() => {
     location.reload();
   }, 500);
 });
+
+// 最終更新時刻の表示
+(function() {
+  const logEl = document.getElementById('last-update-log');
+  const lastUpdate = localStorage.getItem('440llc-last-update');
+  if (logEl && lastUpdate) {
+    const d = new Date(lastUpdate);
+    const fmt = d.getFullYear() + '/' + String(d.getMonth()+1).padStart(2,'0') + '/' + String(d.getDate()).padStart(2,'0') + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+    logEl.textContent = '最終更新: ' + fmt;
+  }
+})();
 
 // desknet's チェック切替
 function toggleDesknet(el) {
