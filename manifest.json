@@ -3,7 +3,7 @@
   "short_name": "440LLC",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#0f172a",
+  "background_color": "#ffffff",
   "theme_color": "#0f172a",
   "orientation": "any",
   "icons": [
