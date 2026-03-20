@@ -55,7 +55,7 @@
   }
   .refresh-btn {
     position: absolute;
-    top: 14px;
+    bottom: 24px;
     right: 16px;
     width: 40px; height: 40px;
     border-radius: 50%;
@@ -688,9 +688,9 @@
     <div class="sub">確認・送信待ち</div>
   </div>
   <div class="stat-card">
-    <div class="label">部署</div>
-    <div class="value green">1</div>
-    <div class="sub">秘書室（稼働中）</div>
+    <div class="label">LogiQueen</div>
+    <div class="value yellow" id="stat-fx" style="color:var(--yellow);">0</div>
+    <div class="sub" id="stat-fx-sub">本日のトレードなし</div>
   </div>
 </div>
 
@@ -959,18 +959,47 @@
       </div>
     </div>
 
-    <!-- 組織 -->
+    <!-- FX LogiQueen カレンダー -->
     <div class="card">
-      <h2>組織構成</h2>
+      <h2>FX LogiQueen <span class="badge" style="background:var(--yellow);color:#000;">きすけ式</span></h2>
+      <div id="fx-today" style="margin-bottom:10px;">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">本日 (3/21)</div>
+        <div style="font-size:13px;color:var(--text-muted);padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;text-align:center;">予定なし</div>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">今後の予定</div>
       <div class="dept-list">
         <div class="dept-item">
-          <div class="dept-name">秘書室</div>
-          <div class="dept-stat" style="color:var(--green);">稼働中</div>
+          <div>
+            <div class="dept-name" style="color:var(--yellow);">ドル円月末売り(ゴトー日なし)</div>
+            <div style="font-size:11px;color:var(--text-muted);">3/23 (月) 8:04〜15:00 | LC350pips</div>
+          </div>
+        </div>
+        <div class="dept-item">
+          <div>
+            <div class="dept-name" style="color:var(--yellow);">ドル円月末売り(ゴトー日なし)</div>
+            <div style="font-size:11px;color:var(--text-muted);">3/24 (火) 8:04〜15:00 | LC350pips</div>
+          </div>
+        </div>
+        <div class="dept-item">
+          <div>
+            <div class="dept-name" style="color:var(--green);">ユロ円ゴトー日買い</div>
+            <div style="font-size:11px;color:var(--text-muted);">3/25 (水) 0:00〜9:54 | LC400pips</div>
+          </div>
+        </div>
+        <div class="dept-item">
+          <div>
+            <div class="dept-name" style="color:var(--accent);">ドル円ゴトー日買い</div>
+            <div style="font-size:11px;color:var(--text-muted);">3/25 (水) 0:00〜9:54 | LC450pips</div>
+          </div>
+        </div>
+        <div class="dept-item">
+          <div>
+            <div class="dept-name" style="color:var(--yellow);">ドル円月末売り(ゴトー日のみ)</div>
+            <div style="font-size:11px;color:var(--text-muted);">3/25 (水) 9:54〜15:00 | LC300pips</div>
+          </div>
         </div>
       </div>
-      <div style="font-size:12px;color:var(--text-muted);margin-top:12px;padding:8px;background:rgba(255,255,255,0.03);border-radius:6px;">
-        業務量に応じて部署を自動提案します。<code style="color:var(--accent);">/company</code> で管理できます。
-      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:10px;">資金管理: リスクは資金の3%</div>
     </div>
   </div>
 </div>
@@ -1430,6 +1459,33 @@ voiceAddBtn.addEventListener('click', () => addTask(voiceInput.value));
 voiceInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') addTask(voiceInput.value);
 });
+
+// FX LogiQueen 当日トレード数
+(function() {
+  const fxEvents = [
+    { date: '2026-03-23', summary: 'ドル円月末売り(ゴトー日なし)' },
+    { date: '2026-03-24', summary: 'ドル円月末売り(ゴトー日なし)' },
+    { date: '2026-03-25', summary: 'ユロ円ゴトー日買い' },
+    { date: '2026-03-25', summary: 'ドル円ゴトー日買い' },
+    { date: '2026-03-25', summary: 'ドル円月末売り(ゴトー日のみ)' },
+    { date: '2026-03-26', summary: 'ドル円月末売り(ゴトー日なし)' },
+    { date: '2026-03-27', summary: 'ドル円月末売り(ゴトー日なし)' },
+  ];
+  const today = new Date().toISOString().slice(0, 10);
+  const todayTrades = fxEvents.filter(e => e.date === today);
+  const count = todayTrades.length;
+  const statFx = document.getElementById('stat-fx');
+  const statFxSub = document.getElementById('stat-fx-sub');
+  if (statFx) {
+    statFx.textContent = count;
+    statFx.style.color = count > 0 ? 'var(--yellow)' : 'var(--text-muted)';
+  }
+  if (statFxSub) {
+    statFxSub.textContent = count > 0
+      ? todayTrades.map(t => t.summary).join(', ')
+      : '本日のトレードなし';
+  }
+})();
 
 // 更新ボタン
 document.getElementById('refresh-btn').addEventListener('click', function() {
