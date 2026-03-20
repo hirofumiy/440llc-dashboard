@@ -734,7 +734,7 @@
     <!-- 最優先タスク -->
     <div class="card" id="urgent-tasks">
       <h2>最優先タスク <span class="badge urgent" id="urgent-count">5</span></h2>
-      <div class="todo-item">
+      <div class="todo-item" data-id="u1">
         <div class="todo-check"></div>
         <div class="todo-content">
           <div class="todo-title">auRE 名義変更: 案件 #2796, #3139, #2797 の名変を至急対応</div>
@@ -745,7 +745,7 @@
           <button class="todo-delete-btn" title="削除">&#x2715;</button>
         </div>
       </div>
-      <div class="todo-item">
+      <div class="todo-item" data-id="u2">
         <div class="todo-check"></div>
         <div class="todo-content">
           <div class="todo-title">auRE 善久様: 案件 #3763 東電WEB申込システムの受電側キャプチャを送付</div>
@@ -756,7 +756,7 @@
           <button class="todo-delete-btn" title="削除">&#x2715;</button>
         </div>
       </div>
-      <div class="todo-item">
+      <div class="todo-item" data-id="u3">
         <div class="todo-check"></div>
         <div class="todo-content">
           <div class="todo-title">auRE 善久様: 別紙1-4 R列を正式発電所名に修正、Q列・S列を半角カタカナに（次回から対応）</div>
@@ -767,7 +767,7 @@
           <button class="todo-delete-btn" title="削除">&#x2715;</button>
         </div>
       </div>
-      <div class="todo-item">
+      <div class="todo-item" data-id="u4">
         <div class="todo-check"></div>
         <div class="todo-content">
           <div class="todo-title">柴田商事 見澤様 / auRE: 使用前自己確認届出書 - 対象案件一覧を確認し準備</div>
@@ -778,7 +778,7 @@
           <button class="todo-delete-btn" title="削除">&#x2715;</button>
         </div>
       </div>
-      <div class="todo-item">
+      <div class="todo-item" data-id="u5">
         <div class="todo-check"></div>
         <div class="todo-content">
           <div class="todo-title">関電 藤田様: ゲンマ阪南奥蓄電所 様式6（土地調査結果）の準備・提出</div>
@@ -794,7 +794,7 @@
     <!-- 通常タスク -->
     <div class="card" id="normal-tasks">
       <h2>通常タスク <span class="badge" id="normal-count">3</span></h2>
-      <div class="todo-item">
+      <div class="todo-item" data-id="n1">
         <div class="todo-check"></div>
         <div class="todo-content">
           <div class="todo-title">東京電力PG 成田支社: 用地交渉・図面の追加回答を確認し、次のアクション判断</div>
@@ -805,7 +805,7 @@
           <button class="todo-delete-btn" title="削除">&#x2715;</button>
         </div>
       </div>
-      <div class="todo-item">
+      <div class="todo-item" data-id="n2">
         <div class="todo-check"></div>
         <div class="todo-content">
           <div class="todo-title">GRITZ 佐藤様: 3/30(月) 11:00-12:00 イーエール&GRITZ MTG の出欠回答</div>
@@ -816,7 +816,7 @@
           <button class="todo-delete-btn" title="削除">&#x2715;</button>
         </div>
       </div>
-      <div class="todo-item">
+      <div class="todo-item" data-id="n3">
         <div class="todo-check"></div>
         <div class="todo-content">
           <div class="todo-title">三菱UFJ信託 海野様: 系統用蓄電所の用地情報 社内精査の進捗確認</div>
@@ -1107,6 +1107,124 @@ function showPraise() {
   setTimeout(dismiss, 2500);
 }
 
+// === localStorage 永続化 ===
+const STORAGE_KEY = '440llc-dashboard-state';
+
+function saveState() {
+  const state = { done: [], skipped: [], deleted: [], moved: [], added: [], desknet: [] };
+  // 完了
+  document.querySelectorAll('.todo-item.completed').forEach(el => {
+    if (el.dataset.id) state.done.push(el.dataset.id);
+  });
+  // スキップ（グレーアウト）
+  document.querySelectorAll('.todo-item.skipped').forEach(el => {
+    if (el.dataset.id) state.skipped.push(el.dataset.id);
+  });
+  // 削除
+  document.querySelectorAll('.todo-item[style*="display: none"]').forEach(el => {
+    if (el.dataset.id) state.deleted.push(el.dataset.id);
+  });
+  // 最優先→通常に移動されたもの
+  document.querySelectorAll('#normal-tasks .todo-item[data-id^="u"]').forEach(el => {
+    state.moved.push(el.dataset.id);
+  });
+  // 追加タスク
+  document.querySelectorAll('#added-tasks-list .todo-item').forEach(el => {
+    state.added.push({
+      id: el.dataset.id,
+      title: el.querySelector('.todo-title').textContent,
+      time: el.querySelector('.todo-meta').textContent.replace('対応不要', '').trim(),
+      done: el.classList.contains('completed'),
+      skipped: el.classList.contains('skipped')
+    });
+  });
+  // desknet's
+  document.querySelectorAll('.desknet-status').forEach((el, i) => {
+    state.desknet.push(el.classList.contains('ok'));
+  });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function restoreState() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return;
+  const state = JSON.parse(raw);
+
+  // 移動（最優先→通常）
+  (state.moved || []).forEach(id => {
+    const item = document.querySelector('[data-id="' + id + '"]');
+    if (item) {
+      const priorityBadge = item.querySelector('.priority-high');
+      if (priorityBadge) {
+        priorityBadge.className = 'priority-normal';
+        priorityBadge.textContent = '通常';
+      }
+      document.getElementById('normal-tasks').appendChild(item);
+    }
+  });
+
+  // 完了
+  (state.done || []).forEach(id => {
+    const item = document.querySelector('[data-id="' + id + '"]');
+    if (item) {
+      item.classList.add('completed');
+      const check = item.querySelector('.todo-check');
+      if (check) check.classList.add('done');
+    }
+  });
+
+  // スキップ
+  (state.skipped || []).forEach(id => {
+    const item = document.querySelector('[data-id="' + id + '"]');
+    if (item) {
+      item.classList.add('skipped');
+      const label = item.querySelector('.skip-label');
+      if (label) label.style.display = 'inline-block';
+    }
+  });
+
+  // 削除
+  (state.deleted || []).forEach(id => {
+    const item = document.querySelector('[data-id="' + id + '"]');
+    if (item) item.style.display = 'none';
+  });
+
+  // 追加タスク
+  if (state.added && state.added.length > 0) {
+    const card = document.getElementById('added-tasks-card');
+    const list = document.getElementById('added-tasks-list');
+    card.style.display = 'block';
+    state.added.forEach(t => {
+      const item = document.createElement('div');
+      item.className = 'todo-item' + (t.done ? ' completed' : '') + (t.skipped ? ' skipped' : '');
+      item.dataset.id = t.id;
+      item.innerHTML = '<div class="todo-check' + (t.done ? ' done' : '') + '"></div>'
+        + '<div class="todo-content">'
+        + '<div class="todo-title">' + t.title + '</div>'
+        + '<div class="todo-meta"><span class="priority-normal">追加</span> ' + t.time + ' <span class="skip-label"' + (t.skipped ? ' style="display:inline-block"' : '') + '>対応不要</span></div>'
+        + '</div>'
+        + '<div class="todo-actions">'
+        + '<button class="todo-skip-btn" title="対応不要">&#x23ED;</button>'
+        + '<button class="todo-delete-btn" title="削除">&#x2715;</button>'
+        + '</div>';
+      list.appendChild(item);
+    });
+    document.getElementById('added-count').textContent = list.children.length;
+  }
+
+  // desknet's
+  (state.desknet || []).forEach((isOk, i) => {
+    const statuses = document.querySelectorAll('.desknet-status');
+    if (statuses[i] && isOk) {
+      statuses[i].classList.remove('pending');
+      statuses[i].classList.add('ok');
+      statuses[i].textContent = '確認済';
+    }
+  });
+}
+
+restoreState();
+
 // 統計更新
 function updateStats() {
   const allItems = document.querySelectorAll('.todo-item:not([style*="display: none"])');
@@ -1162,6 +1280,7 @@ function bindTodoEvents() {
         item.classList.remove('completed');
       }
       updateStats();
+      saveState();
     });
   });
 
@@ -1191,6 +1310,7 @@ function bindTodoEvents() {
           item.style.opacity = '1';
           item.style.transform = 'none';
           updateStats();
+          saveState();
         }, 400);
       } else {
         // 通常タスク → グレーアウト
@@ -1198,6 +1318,7 @@ function bindTodoEvents() {
         const label = item.querySelector('.skip-label');
         if (label) label.style.display = 'inline-block';
         updateStats();
+        saveState();
       }
     });
   });
@@ -1216,6 +1337,7 @@ function bindTodoEvents() {
       setTimeout(() => {
         item.style.display = 'none';
         updateStats();
+        saveState();
       }, 300);
     });
   });
@@ -1281,6 +1403,7 @@ function addTask(text) {
 
   const item = document.createElement('div');
   item.className = 'todo-item';
+  item.dataset.id = 'a' + Date.now();
   item.innerHTML = '<div class="todo-check"></div>'
     + '<div class="todo-content">'
     + '<div class="todo-title">' + text + '</div>'
@@ -1297,6 +1420,7 @@ function addTask(text) {
 
   bindTodoEvents();
   updateStats();
+  saveState();
   voiceInput.value = '';
   voiceStatus.textContent = 'タスクを追加しました！';
   setTimeout(() => { voiceStatus.textContent = ''; }, 2000);
@@ -1327,6 +1451,7 @@ function toggleDesknet(el) {
     status.classList.add('pending');
     status.textContent = '未確認';
   }
+  saveState();
 }
 </script>
 </body>
