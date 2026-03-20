@@ -1,0 +1,17 @@
+{
+  "name": "440LLC ダッシュボード",
+  "short_name": "440LLC",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%230f172a'/><text x='256' y='300' text-anchor='middle' fill='%2338bdf8' font-size='140' font-weight='bold' font-family='system-ui'>440</text><text x='256' y='400' text-anchor='middle' fill='%2394a3b8' font-size='70' font-family='system-ui'>LLC</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
