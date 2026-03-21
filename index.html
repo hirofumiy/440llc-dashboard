@@ -488,6 +488,32 @@
     margin-top: 3px;
   }
 
+  /* スケジュール */
+  .schedule-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .schedule-item:last-child { border-bottom: none; }
+  .schedule-time {
+    min-width: 55px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .schedule-title { color: var(--text); }
+  .schedule-allday {
+    background: rgba(56,189,248,0.15);
+    color: var(--accent);
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
   /* 秘書プロフィール */
   .secretary-profile {
     display: flex;
@@ -705,6 +731,18 @@
 <div class="main-grid">
   <!-- 左カラム -->
   <div>
+    <!-- 今日のスケジュール -->
+    <div class="card" id="schedule-section">
+      <h2>今日のスケジュール <span class="badge" style="background:var(--accent);" id="schedule-count">0</span></h2>
+      <div id="schedule-list">
+        <div style="color:var(--text-muted);font-size:13px;padding:8px 0;">予定なし — ゆっくり休んでくださいね</div>
+      </div>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
+        <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">今後の予定</div>
+        <div id="upcoming-list"></div>
+      </div>
+    </div>
+
     <!-- アラート -->
     <div class="card">
       <h2>アラート <span class="badge urgent">3</span></h2>
@@ -1488,6 +1526,69 @@ voiceAddBtn.addEventListener('click', () => addTask(voiceInput.value));
 voiceInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') addTask(voiceInput.value);
 });
+
+// TimeTree「ひろコンビ」スケジュール表示
+(function() {
+  const ttEvents = [
+    { date: '2026-03-23', time: '終日', title: '3760 3764 WARP処理', allDay: true },
+    { date: '2026-03-23', time: '終日', title: '3138 使用前自己確認 善久さん返信', allDay: true },
+    { date: '2026-03-23', time: '14:30', title: '丸越商事訪問', allDay: false },
+    { date: '2026-03-24', time: '09:00', title: '大前さん訪問', allDay: false },
+    { date: '2026-03-24', time: '16:30', title: '永山医院', allDay: false },
+    { date: '2026-03-25', time: '終日', title: '税務署', allDay: true },
+    { date: '2026-03-25', time: '10:30', title: '橋本さん（スターティア）来社', allDay: false },
+    { date: '2026-03-25', time: '18:00', title: '太陽光ナレッジミーティング（學AI）', allDay: false },
+    { date: '2026-03-25', time: '18:00', title: '内君会食', allDay: false },
+    { date: '2026-03-26', time: '11:00', title: '蓄電池土地打ち合わせ', allDay: false },
+    { date: '2026-03-27', time: '18:00', title: 'アチーブメント', allDay: false },
+    { date: '2026-03-31', time: '13:00', title: 'ナレッジ共有会', allDay: false },
+    { date: '2026-04-02', time: '終日', title: 'JPNカップ', allDay: true },
+    { date: '2026-04-17', time: '18:00', title: 'スタジオ（アンマミエヘン）', allDay: false },
+    { date: '2026-04-23', time: '終日', title: 'ゴルフ会', allDay: true },
+    { date: '2026-04-28', time: '06:30', title: 'クローバーテクノロジー10周年パーティー', allDay: false },
+    { date: '2026-06-03', time: '18:00', title: '甲子園 西武戦（山本家4枚）', allDay: false },
+  ];
+  const today = new Date().toISOString().slice(0, 10);
+  const todayEvents = ttEvents.filter(e => e.date === today);
+  const futureEvents = ttEvents.filter(e => e.date > today).slice(0, 7);
+
+  // 今日のスケジュール
+  const scheduleList = document.getElementById('schedule-list');
+  const scheduleCount = document.getElementById('schedule-count');
+  if (scheduleCount) scheduleCount.textContent = todayEvents.length;
+  if (scheduleList && todayEvents.length > 0) {
+    scheduleList.innerHTML = todayEvents.map(e =>
+      '<div class="schedule-item">' +
+        '<div class="schedule-time">' + (e.allDay ? '<span class="schedule-allday">終日</span>' : e.time) + '</div>' +
+        '<div class="schedule-title">' + e.title + '</div>' +
+      '</div>'
+    ).join('');
+  }
+
+  // 今後の予定
+  const upcomingList = document.getElementById('upcoming-list');
+  if (upcomingList && futureEvents.length > 0) {
+    const grouped = {};
+    futureEvents.forEach(e => {
+      if (!grouped[e.date]) grouped[e.date] = [];
+      grouped[e.date].push(e);
+    });
+    let html = '';
+    Object.keys(grouped).sort().forEach(date => {
+      const d = new Date(date + 'T00:00:00+09:00');
+      const days = ['日','月','火','水','木','金','土'];
+      const label = (d.getMonth()+1) + '/' + d.getDate() + '（' + days[d.getDay()] + '）';
+      html += '<div style="font-size:11px;color:var(--accent);margin-top:6px;font-weight:600;">' + label + '</div>';
+      grouped[date].forEach(e => {
+        html += '<div class="schedule-item" style="padding:5px 0;">' +
+          '<div class="schedule-time">' + (e.allDay ? '<span class="schedule-allday">終日</span>' : e.time) + '</div>' +
+          '<div class="schedule-title">' + e.title + '</div>' +
+        '</div>';
+      });
+    });
+    upcomingList.innerHTML = html;
+  }
+})();
 
 // FX LogiQueen 当日トレード数
 (function() {
