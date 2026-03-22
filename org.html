@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f172a">
+<title>440LLC 組織図・メンバー紹介</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f172a;color:#e2e8f0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans",sans-serif;line-height:1.6;min-height:100vh}
+a{color:#38bdf8;text-decoration:none}
+a:hover{text-decoration:underline}
+
+.top-bar{position:sticky;top:0;z-index:100;background:rgba(15,23,42,.92);backdrop-filter:blur(12px);border-bottom:1px solid #1e293b;padding:12px 20px}
+.top-bar a{font-size:14px;display:inline-flex;align-items:center;gap:6px}
+.top-bar a svg{width:16px;height:16px;fill:currentColor}
+
+.hero{text-align:center;padding:48px 20px 32px}
+.hero h1{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:800;background:linear-gradient(135deg,#38bdf8,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:#94a3b8;margin-top:8px;font-size:14px}
+
+.search-wrap{max-width:480px;margin:0 auto 32px;padding:0 20px}
+.search-wrap input{width:100%;padding:12px 16px;border-radius:12px;border:1px solid #334155;background:#1e293b;color:#e2e8f0;font-size:15px;outline:none;transition:border-color .2s}
+.search-wrap input:focus{border-color:#38bdf8}
+.search-wrap input::placeholder{color:#64748b}
+
+.dept-nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:0 20px 32px;max-width:900px;margin:0 auto}
+.dept-nav a{padding:6px 14px;border-radius:20px;background:#1e293b;font-size:13px;color:#94a3b8;border:1px solid #334155;transition:all .2s;white-space:nowrap}
+.dept-nav a:hover,.dept-nav a:focus{background:#334155;color:#38bdf8;text-decoration:none;border-color:#38bdf8}
+
+.container{max-width:1200px;margin:0 auto;padding:0 20px 60px}
+
+.dept-section{margin-bottom:48px}
+.dept-header{display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid #334155}
+.dept-num{background:linear-gradient(135deg,#38bdf8,#818cf8);color:#0f172a;font-weight:800;font-size:13px;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dept-header h2{font-size:clamp(1.1rem,3vw,1.4rem);font-weight:700;color:#f1f5f9}
+.dept-header .dept-count{margin-left:auto;font-size:13px;color:#64748b;white-space:nowrap}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+
+.card{background:#1e293b;border-radius:16px;border:1px solid #334155;overflow:hidden;transition:transform .2s,box-shadow .2s,border-color .2s;cursor:default}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.3);border-color:#38bdf8}
+.card.is-bucho{border-color:#818cf8}
+.card.is-bucho:hover{border-color:#a78bfa}
+
+.card-top{display:flex;align-items:center;gap:14px;padding:20px 20px 0}
+.avatar{width:64px;height:64px;border-radius:50%;object-fit:cover;border:3px solid #334155;flex-shrink:0;background:#0f172a}
+.card.is-bucho .avatar{border-color:#818cf8}
+.card-name{flex:1;min-width:0}
+.card-name h3{font-size:16px;font-weight:700;color:#f1f5f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-name .reading{font-size:12px;color:#64748b;margin-top:2px}
+.card-name .role-badge{display:inline-block;margin-top:4px;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600}
+.role-bucho{background:rgba(129,140,248,.2);color:#a5b4fc}
+.role-kacho{background:rgba(56,189,248,.15);color:#7dd3fc}
+.card-name .tantou{font-size:12px;color:#94a3b8;margin-top:4px}
+
+.card-body{padding:16px 20px 20px}
+.profile-grid{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px}
+.profile-grid dt{color:#64748b;white-space:nowrap}
+.profile-grid dd{color:#cbd5e1}
+.card-quote{margin-top:12px;padding:10px 14px;background:rgba(56,189,248,.06);border-left:3px solid #38bdf8;border-radius:0 8px 8px 0;font-size:13px;color:#94a3b8;font-style:italic}
+.card.is-bucho .card-quote{border-left-color:#818cf8;background:rgba(129,140,248,.06)}
+
+.no-results{text-align:center;padding:60px 20px;color:#64748b;font-size:15px;display:none}
+
+footer{text-align:center;padding:32px 20px;border-top:1px solid #1e293b;color:#64748b;font-size:13px}
+footer a{color:#38bdf8}
+
+@media(max-width:600px){
+  .cards{grid-template-columns:1fr}
+  .card-top{padding:16px 16px 0}
+  .card-body{padding:12px 16px 16px}
+  .avatar{width:52px;height:52px}
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <a href="index.html"><svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>ダッシュボードに戻る</a>
+</div>
+
+<div class="hero">
+  <h1>440LLC 組織図・メンバー紹介</h1>
+  <p>12部門 / 43名体制（部長12名＋課長31名）</p>
+</div>
+
+<div class="search-wrap">
+  <input type="search" id="searchInput" placeholder="名前・部署・担当で検索...">
+</div>
+
+<nav class="dept-nav" id="deptNav"></nav>
+
+<div class="container" id="orgContainer"></div>
+
+<div class="no-results" id="noResults">該当するメンバーが見つかりません</div>
+
+<footer>
+  <p><a href="index.html">← ダッシュボードに戻る</a></p>
+  <p style="margin-top:8px">440LLC AI Virtual Organization</p>
+</footer>
+
+<script>
+const departments = [
+  {
+    id: "00", name: "秘書室", members: [
+      { name:"水瀬 楓", reading:"みなせ かえで", role:"部長", tantou:"司令塔・窓口", avatar:"secretary.jpg", birth:"1995-03-14", age:31, from:"東京都世田谷区", height:"162cm", weight:"49kg", blood:"A", hobby:"紅茶のブレンド、手帳デコ", quote:"ひろ社長のそばで、すべてを整えます。" },
+      { name:"星野 みゆき", reading:"ほしの みゆき", role:"課長", tantou:"旅行手配", birth:"1997-08-22", age:28, from:"北海道札幌市", height:"158cm", weight:"46kg", blood:"O", hobby:"温泉巡り、旅行プラン作り", quote:"最高の旅は、最高の準備から。" },
+    ]
+  },
+  {
+    id: "01", name: "経営企画部", members: [
+      { name:"霧島 蒼", reading:"きりしま あおい", role:"部長", tantou:"経営企画統括", birth:"1987-11-03", age:38, from:"鹿児島県霧島市", height:"176cm", weight:"68kg", blood:"AB", hobby:"囲碁、経営書の読書", quote:"数字の向こうに、未来が見える。" },
+      { name:"上杉 慧", reading:"うえすぎ けい", role:"課長", tantou:"戦略策定", birth:"1993-06-18", age:32, from:"新潟県上越市", height:"174cm", weight:"65kg", blood:"A", hobby:"チェス、ランニング", quote:"戦略なき行動は、弾なき銃と同じ。" },
+      { name:"三好 沙織", reading:"みよし さおり", role:"課長", tantou:"事業計画", birth:"1994-02-28", age:32, from:"徳島県三好市", height:"160cm", weight:"50kg", blood:"B", hobby:"ヨガ、ビジネスモデルキャンバス作り", quote:"計画は夢に翼を与える。" },
+      { name:"柏木 隼人", reading:"かしわぎ はやと", role:"課長", tantou:"競合分析", birth:"1991-09-12", age:34, from:"千葉県柏市", height:"178cm", weight:"72kg", blood:"O", hobby:"ボルダリング、データ可視化", quote:"敵を知り己を知れば百戦危うからず。" },
+      { name:"天野 紗英", reading:"あまの さえ", role:"課長", tantou:"会議運営", birth:"1996-04-05", age:29, from:"静岡県浜松市", height:"155cm", weight:"45kg", blood:"A", hobby:"ファシリテーション研究、カフェ巡り", quote:"良い会議は、良い問いから始まる。" },
+    ]
+  },
+  {
+    id: "02", name: "事業開発部", members: [
+      { name:"朝比奈 遼", reading:"あさひな りょう", role:"部長", tantou:"事業開発統括", birth:"1986-07-20", age:39, from:"神奈川県鎌倉市", height:"180cm", weight:"74kg", blood:"B", hobby:"サーフィン、スタートアップ研究", quote:"0→1を生み出す、それが俺の仕事だ。" },
+      { name:"九条 拓海", reading:"くじょう たくみ", role:"課長", tantou:"新事業開発", birth:"1992-12-01", age:33, from:"京都府京都市", height:"172cm", weight:"63kg", blood:"AB", hobby:"プロトタイピング、茶道", quote:"アイデアは実装して初めて価値になる。" },
+      { name:"真田 亜美", reading:"さなだ あみ", role:"課長", tantou:"人材・BPO", birth:"1995-05-15", age:30, from:"長野県上田市", height:"164cm", weight:"52kg", blood:"A", hobby:"人材マッチング分析、登山", quote:"適材適所が組織を強くする。" },
+      { name:"片瀬 涼太", reading:"かたせ りょうた", role:"課長", tantou:"品質改善", birth:"1990-10-30", age:35, from:"神奈川県藤沢市", height:"175cm", weight:"67kg", blood:"O", hobby:"品質管理手法の研究、海釣り", quote:"1%の改善が100%の信頼に繋がる。" },
+      { name:"安藤 千尋", reading:"あんどう ちひろ", role:"課長", tantou:"収益モデル", birth:"1993-01-08", age:33, from:"愛知県名古屋市", height:"159cm", weight:"48kg", blood:"B", hobby:"財務モデリング、ピアノ", quote:"数字は嘘をつかない。でも、語りかけてくる。" },
+    ]
+  },
+  {
+    id: "03", name: "コンテンツ制作部", members: [
+      { name:"葉山 彩", reading:"はやま あや", role:"部長", tantou:"コンテンツ統括", birth:"1989-04-17", age:36, from:"神奈川県葉山町", height:"166cm", weight:"53kg", blood:"A", hobby:"写真撮影、美術館巡り", quote:"伝わるコンテンツには、必ず物語がある。" },
+      { name:"佐倉 美月", reading:"さくら みづき", role:"課長", tantou:"Web管理", birth:"1996-09-23", age:29, from:"千葉県佐倉市", height:"157cm", weight:"47kg", blood:"O", hobby:"UIデザイン、ハンドレタリング", quote:"美しいWebは、美しいコードから。" },
+      { name:"望月 蓮", reading:"もちづき れん", role:"課長", tantou:"脚本", birth:"1991-12-15", age:34, from:"山梨県富士吉田市", height:"170cm", weight:"60kg", blood:"AB", hobby:"映画鑑賞、短編小説執筆", quote:"物語の力で、世界を動かす。" },
+      { name:"高瀬 遥", reading:"たかせ はるか", role:"課長", tantou:"コンテンツ制作", birth:"1994-06-30", age:31, from:"岐阜県高山市", height:"163cm", weight:"50kg", blood:"B", hobby:"イラスト制作、アニメ鑑賞", quote:"クリエイティブに限界はない。" },
+      { name:"日向 つむぎ", reading:"ひなた つむぎ", role:"課長", tantou:"SNS運用", birth:"1998-11-11", age:27, from:"宮崎県日向市", height:"154cm", weight:"44kg", blood:"A", hobby:"SNSトレンド分析、ダンス", quote:"バズは狙うもの。偶然なんかじゃない。" },
+    ]
+  },
+  {
+    id: "04", name: "マーケティング部", members: [
+      { name:"結城 真帆", reading:"ゆうき まほ", role:"部長", tantou:"マーケ統括", birth:"1988-08-08", age:37, from:"茨城県結城市", height:"168cm", weight:"55kg", blood:"O", hobby:"消費者心理研究、ワイン", quote:"マーケティングは科学であり、芸術でもある。" },
+      { name:"早瀬 奏", reading:"はやせ かなで", role:"課長", tantou:"広報", birth:"1995-03-03", age:31, from:"群馬県前橋市", height:"161cm", weight:"49kg", blood:"A", hobby:"プレスリリース執筆、フルート演奏", quote:"言葉ひとつで、企業の印象は変わる。" },
+      { name:"橘 美咲", reading:"たちばな みさき", role:"課長", tantou:"コピー", birth:"1993-07-14", age:32, from:"愛媛県松山市", height:"156cm", weight:"46kg", blood:"B", hobby:"コピーライティング研究、俳句", quote:"一行の言葉に、魂を込める。" },
+      { name:"榊原 大地", reading:"さかきばら だいち", role:"課長", tantou:"広告", birth:"1990-05-25", age:35, from:"三重県津市", height:"181cm", weight:"76kg", blood:"O", hobby:"広告クリエイティブ分析、バスケットボール", quote:"広告は投資。リターンで語る。" },
+      { name:"園田 茜", reading:"そのだ あかね", role:"課長", tantou:"CRM", birth:"1994-10-19", age:31, from:"熊本県熊本市", height:"160cm", weight:"50kg", blood:"AB", hobby:"顧客データ分析、ボードゲーム", quote:"一人ひとりのお客様に、最適な体験を。" },
+    ]
+  },
+  {
+    id: "05", name: "経営管理部", members: [
+      { name:"藤堂 理沙", reading:"とうどう りさ", role:"部長", tantou:"経営管理統括", birth:"1985-01-20", age:41, from:"大阪府堺市", height:"165cm", weight:"54kg", blood:"A", hobby:"簿記研究、クラシック音楽鑑賞", quote:"数字の裏にある真実を見抜く。" },
+      { name:"西園寺 芽衣", reading:"さいおんじ めい", role:"課長", tantou:"経理", birth:"1994-04-12", age:31, from:"京都府宇治市", height:"158cm", weight:"47kg", blood:"O", hobby:"家計簿アプリ開発、抹茶スイーツ巡り", quote:"1円の誤差も見逃しません。" },
+      { name:"如月 翔平", reading:"きさらぎ しょうへい", role:"課長", tantou:"予算管理", birth:"1991-02-14", age:35, from:"東京都港区", height:"177cm", weight:"70kg", blood:"B", hobby:"ファイナンシャルプランニング、ゴルフ", quote:"予算は制約ではなく、道しるべ。" },
+      { name:"相馬 志帆", reading:"そうま しほ", role:"課長", tantou:"契約管理", birth:"1993-08-09", age:32, from:"福島県相馬市", height:"162cm", weight:"51kg", blood:"A", hobby:"契約書レビュー、ガーデニング", quote:"一文字の違いが、運命を分ける。" },
+      { name:"黒田 浩二", reading:"くろだ こうじ", role:"課長", tantou:"請求管理", birth:"1989-11-28", age:36, from:"兵庫県姫路市", height:"173cm", weight:"69kg", blood:"O", hobby:"Excel関数の極め、日本酒", quote:"請求漏れゼロ。それがプロの矜持。" },
+      { name:"今井 さくら", reading:"いまい さくら", role:"課長", tantou:"補助金", birth:"1996-04-01", age:29, from:"長野県松本市", height:"156cm", weight:"45kg", blood:"AB", hobby:"補助金情報収集、水彩画", quote:"使える制度は全部使い倒す。" },
+    ]
+  },
+  {
+    id: "06", name: "リサーチ部", members: [
+      { name:"白石 凛", reading:"しらいし りん", role:"部長", tantou:"リサーチ統括", birth:"1987-06-06", age:38, from:"北海道旭川市", height:"169cm", weight:"57kg", blood:"A", hobby:"論文読破、クロスワードパズル", quote:"仮説なきリサーチは、地図なき航海。" },
+      { name:"水上 玲奈", reading:"みなかみ れな", role:"課長", tantou:"補助金リサーチ", birth:"1995-09-08", age:30, from:"群馬県みなかみ町", height:"160cm", weight:"48kg", blood:"B", hobby:"政策リサーチ、カヌー", quote:"情報は足で稼ぐ時代から、AIで掘る時代へ。" },
+      { name:"氷室 壮一郎", reading:"ひむろ そういちろう", role:"課長", tantou:"再エネリサーチ", birth:"1988-03-21", age:38, from:"奈良県奈良市", height:"182cm", weight:"78kg", blood:"O", hobby:"再エネ技術論文読解、トレイルランニング", quote:"再エネの未来は、データの中にある。" },
+      { name:"グエン・ティ・リン", reading:"Nguyễn Thị Linh", role:"課長", tantou:"ベトナムリサーチ", birth:"1996-12-25", age:29, from:"ベトナム ハノイ", height:"155cm", weight:"44kg", blood:"A", hobby:"ベトナム料理研究、語学学習（日英越）", quote:"ベトナムと日本の架け橋になりたい。" },
+    ]
+  },
+  {
+    id: "07", name: "営業部", members: [
+      { name:"瀬戸 陽菜", reading:"せと ひな", role:"部長", tantou:"営業統括", birth:"1990-02-11", age:36, from:"広島県尾道市", height:"164cm", weight:"52kg", blood:"O", hobby:"プレゼン技術研究、瀬戸内海サイクリング", quote:"信頼は数字より先に築くもの。" },
+      { name:"伊吹 航", reading:"いぶき わたる", role:"課長", tantou:"提案書作成", birth:"1992-07-07", age:33, from:"滋賀県米原市", height:"179cm", weight:"73kg", blood:"B", hobby:"提案資料デザイン、キャンプ", quote:"提案書は、相手へのラブレターだ。" },
+      { name:"久保田 詩織", reading:"くぼた しおり", role:"課長", tantou:"契約書", birth:"1994-11-16", age:31, from:"埼玉県川越市", height:"161cm", weight:"49kg", blood:"A", hobby:"リーガルテック研究、編み物", quote:"契約書は信頼の設計図。" },
+    ]
+  },
+  {
+    id: "08", name: "プロジェクト管理部", members: [
+      { name:"鷹野 誠", reading:"たかの まこと", role:"部長", tantou:"PM統括", birth:"1984-10-10", age:41, from:"福岡県福岡市", height:"183cm", weight:"80kg", blood:"O", hobby:"ガントチャート芸術、マラソン", quote:"納期は守るものではなく、管理するもの。" },
+      { name:"城島 健太", reading:"じょうしま けんた", role:"課長", tantou:"auRE管理", birth:"1991-05-05", age:34, from:"大分県別府市", height:"176cm", weight:"71kg", blood:"A", hobby:"再エネ発電量モニタリング、温泉", quote:"auRE工程、すべて把握しています。" },
+      { name:"桜庭 麻衣", reading:"さくらば まい", role:"課長", tantou:"蓄電所申請", birth:"1993-09-30", age:32, from:"秋田県秋田市", height:"159cm", weight:"48kg", blood:"B", hobby:"行政手続きハック、フラワーアレンジメント", quote:"申請は段取りが9割。" },
+      { name:"篠原 聡", reading:"しのはら さとし", role:"課長", tantou:"DD", birth:"1989-06-22", age:36, from:"栃木県宇都宮市", height:"174cm", weight:"66kg", blood:"AB", hobby:"デューデリジェンス手法研究、将棋", quote:"リスクは事前に潰すもの。" },
+    ]
+  },
+  {
+    id: "09", name: "法務部", members: [
+      { name:"神崎 律", reading:"かんざき りつ", role:"部長", tantou:"法務統括", birth:"1986-01-15", age:40, from:"東京都千代田区", height:"170cm", weight:"62kg", blood:"A", hobby:"判例研究、コーヒー焙煎", quote:"法はビジネスの守護者。" },
+      { name:"冬木 純也", reading:"ふゆき じゅんや", role:"課長", tantou:"法規制チェック", birth:"1992-12-24", age:33, from:"北海道函館市", height:"175cm", weight:"68kg", blood:"O", hobby:"法改正ウォッチング、スノーボード", quote:"規制の変化を見逃さない。" },
+      { name:"七瀬 美波", reading:"ななせ みなみ", role:"課長", tantou:"申請書類管理", birth:"1995-07-07", age:30, from:"神奈川県横浜市", height:"163cm", weight:"50kg", blood:"B", hobby:"書類整理術、海辺の散歩", quote:"完璧な書類は、完璧な準備から生まれる。" },
+    ]
+  },
+  {
+    id: "10", name: "テック部", members: [
+      { name:"桐生 翔", reading:"きりゅう しょう", role:"部長", tantou:"テック統括", birth:"1988-05-18", age:37, from:"群馬県桐生市", height:"177cm", weight:"69kg", blood:"AB", hobby:"OSS開発、自作キーボード制作", quote:"技術は課題を解決するためにある。" },
+      { name:"月城 陸", reading:"つきしろ りく", role:"課長", tantou:"ダッシュボード", birth:"1997-01-30", age:29, from:"石川県金沢市", height:"171cm", weight:"61kg", blood:"A", hobby:"フロントエンド開発、天体観測", quote:"ダッシュボードは組織の羅針盤。" },
+      { name:"香坂 ひかり", reading:"こうさか ひかり", role:"課長", tantou:"自動化", birth:"1996-10-03", age:29, from:"福岡県北九州市", height:"157cm", weight:"46kg", blood:"O", hobby:"RPA設計、猫カフェ巡り", quote:"自動化できるものは、すべて自動化する。" },
+    ]
+  },
+  {
+    id: "11", name: "海外事業部", members: [
+      { name:"南條 ハナ", reading:"なんじょう はな", role:"部長", tantou:"海外事業統括", birth:"1987-09-14", age:38, from:"沖縄県那覇市", height:"167cm", weight:"55kg", blood:"O", hobby:"異文化コミュニケーション研究、スキューバダイビング", quote:"国境を越えて、価値を届ける。" },
+      { name:"ファム・ミン・トゥアン", reading:"Phạm Minh Tuấn", role:"課長", tantou:"サプリメント販売", birth:"1994-03-08", age:32, from:"ベトナム ホーチミン", height:"168cm", weight:"62kg", blood:"B", hobby:"健康食品マーケティング、サッカー", quote:"ベトナム市場のポテンシャルは無限大。" },
+    ]
+  }
+];
+
+function getAvatar(m) {
+  if (m.avatar) return m.avatar;
+  return `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(m.name)}`;
+}
+
+function renderOrg(filter) {
+  const container = document.getElementById('orgContainer');
+  const nav = document.getElementById('deptNav');
+  const noResults = document.getElementById('noResults');
+  const q = (filter || '').toLowerCase().trim();
+  let html = '';
+  let navHtml = '';
+  let totalShown = 0;
+
+  departments.forEach(dept => {
+    const filtered = dept.members.filter(m => {
+      if (!q) return true;
+      return (m.name + m.reading + m.tantou + dept.name + m.from + m.hobby + m.quote).toLowerCase().includes(q);
+    });
+    if (filtered.length === 0) return;
+    totalShown += filtered.length;
+    navHtml += `<a href="#dept-${dept.id}">${dept.name}</a>`;
+    html += `<section class="dept-section" id="dept-${dept.id}">
+      <div class="dept-header">
+        <div class="dept-num">${dept.id}</div>
+        <h2>${dept.name}</h2>
+        <span class="dept-count">${filtered.length}名</span>
+      </div>
+      <div class="cards">`;
+    filtered.forEach(m => {
+      const isBucho = m.role === '部長';
+      html += `<div class="card ${isBucho ? 'is-bucho' : ''}" data-name="${m.name}" data-dept="${dept.name}">
+        <div class="card-top">
+          <img class="avatar" src="${getAvatar(m)}" alt="${m.name}" loading="lazy" onerror="this.src='https://api.dicebear.com/9.x/adventurer/svg?seed=fallback'">
+          <div class="card-name">
+            <h3>${m.name}</h3>
+            <div class="reading">${m.reading}</div>
+            <span class="role-badge ${isBucho ? 'role-bucho' : 'role-kacho'}">${m.role}</span>
+            <div class="tantou">${m.tantou}</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <dl class="profile-grid">
+            <dt>生年月日</dt><dd>${m.birth}（${m.age}歳）</dd>
+            <dt>出身</dt><dd>${m.from}</dd>
+            <dt>身長/体重</dt><dd>${m.height} / ${m.weight}</dd>
+            <dt>血液型</dt><dd>${m.blood}型</dd>
+            <dt>趣味</dt><dd>${m.hobby}</dd>
+          </dl>
+          <div class="card-quote">「${m.quote}」</div>
+        </div>
+      </div>`;
+    });
+    html += `</div></section>`;
+  });
+
+  nav.innerHTML = navHtml;
+  container.innerHTML = html;
+  noResults.style.display = totalShown === 0 ? 'block' : 'none';
+}
+
+document.getElementById('searchInput').addEventListener('input', function() {
+  renderOrg(this.value);
+});
+
+renderOrg();
+</script>
+</body>
+</html>
