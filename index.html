@@ -966,7 +966,7 @@
       <h2>期限カレンダー</h2>
       <div class="timeline">
         <div class="timeline-item urgent">
-          <div class="timeline-date">本日 - 3/20</div>
+          <div class="timeline-date" id="timeline-today">本日</div>
           <div class="timeline-text">auRE #2797 連系予定日</div>
         </div>
         <div class="timeline-item urgent">
@@ -1030,7 +1030,7 @@
     <div class="card">
       <h2>FX LogiQueen <span class="badge" style="background:var(--yellow);color:#000;">きすけ式</span></h2>
       <div id="fx-today" style="margin-bottom:10px;">
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">本日 (3/21)</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;" id="fx-today-label">本日</div>
         <div style="font-size:13px;color:var(--text-muted);padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;text-align:center;">予定なし</div>
       </div>
       <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">今後の予定</div>
@@ -1588,6 +1588,17 @@ voiceInput.addEventListener('keydown', (e) => {
     });
     upcomingList.innerHTML = html;
   }
+})();
+
+// 動的日付表示
+(function() {
+  const now = new Date();
+  const m = now.getMonth() + 1;
+  const d = now.getDate();
+  const el = document.getElementById('timeline-today');
+  if (el) el.textContent = '本日 - ' + m + '/' + d;
+  const fxLabel = document.getElementById('fx-today-label');
+  if (fxLabel) fxLabel.textContent = '本日 (' + m + '/' + d + ')';
 })();
 
 // FX LogiQueen 当日トレード数
