@@ -6,34 +6,72 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="440LLC">
-<meta name="theme-color" content="#0f172a">
+<meta name="theme-color" content="#000000">
 <link rel="apple-touch-icon" href="apple-touch-icon-v2.png">
 <link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <title>440LLC ダッシュボード</title>
 <style>
   :root {
-    --bg: #0f172a;
-    --card: #1e293b;
-    --border: #334155;
-    --text: #e2e8f0;
-    --text-muted: #94a3b8;
-    --accent: #38bdf8;
-    --red: #f87171;
-    --orange: #fb923c;
-    --green: #4ade80;
-    --yellow: #facc15;
+    --bg: #000000;
+    --bg-deep: #050508;
+    --card: #0a0a0f;
+    --card-elevated: #0f0f16;
+    --border: #1a1a2e;
+    --border-glow: #1a1a3a;
+    --text: #e0e0e8;
+    --text-muted: #5a5a72;
+    --accent: #00d4ff;
+    --accent-dim: rgba(0,212,255,0.08);
+    --accent-glow: rgba(0,212,255,0.15);
+    --red: #ff3b5c;
+    --orange: #ffb800;
+    --green: #00e676;
+    --yellow: #ffb800;
+    --font-data: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    --font-label: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-family: var(--font-label);
     background: var(--bg);
     color: var(--text);
     padding: 0;
     min-height: 100vh;
     overscroll-behavior-y: contain;
+    position: relative;
+  }
+  /* Scan-line overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255,255,255,0.008) 2px,
+      rgba(255,255,255,0.008) 4px
+    );
+    pointer-events: none;
+    z-index: 9990;
+  }
+  /* Grid pattern overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 9989;
   }
 
-  /* プルトゥリフレッシュ */
+  /* Pull to refresh */
   .pull-indicator {
     position: fixed;
     top: 0;
@@ -41,7 +79,7 @@
     transform: translateX(-50%) translateY(-60px);
     z-index: 9999;
     background: var(--card);
-    border: 1px solid var(--border);
+    border: 1px solid var(--accent);
     border-radius: 50%;
     width: 44px;
     height: 44px;
@@ -51,11 +89,10 @@
     font-size: 20px;
     transition: transform 0.2s ease, opacity 0.2s ease;
     opacity: 0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    box-shadow: 0 0 20px rgba(0,212,255,0.3);
+    font-family: var(--font-data);
   }
-  .pull-indicator.visible {
-    opacity: 1;
-  }
+  .pull-indicator.visible { opacity: 1; }
   .pull-indicator.refreshing {
     animation: pullSpin 0.8s linear infinite;
   }
@@ -63,26 +100,28 @@
     to { transform: translateX(-50%) translateY(20px) rotate(360deg); }
   }
 
-  /* ヒーロー写真（トップ） */
+  /* Hero photo */
   .hero-photo {
     position: relative;
     width: 100%;
-    height: 220px;
+    height: 240px;
     overflow: hidden;
+    border-bottom: 1px solid var(--border-glow);
   }
   .hero-photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    filter: saturate(0.7) brightness(0.6);
   }
   .hero-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(transparent 30%, rgba(15,23,42,0.85));
+    background: linear-gradient(transparent 10%, rgba(0,0,0,0.92));
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 20px 24px;
+    padding: 24px;
   }
   .refresh-btn {
     position: absolute;
@@ -90,10 +129,10 @@
     right: 16px;
     width: 40px; height: 40px;
     border-radius: 50%;
-    border: none;
-    background: rgba(255,255,255,0.2);
-    backdrop-filter: blur(8px);
-    color: #fff;
+    border: 1px solid rgba(0,212,255,0.3);
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(12px);
+    color: var(--accent);
     font-size: 18px;
     cursor: pointer;
     z-index: 10;
@@ -103,8 +142,9 @@
     transition: all 0.3s;
   }
   .refresh-btn:hover {
-    background: rgba(255,255,255,0.35);
+    background: rgba(0,212,255,0.15);
     transform: rotate(90deg);
+    box-shadow: 0 0 16px rgba(0,212,255,0.3);
   }
   .refresh-btn.spinning {
     animation: spin 0.8s ease;
@@ -113,113 +153,154 @@
     to { transform: rotate(360deg); }
   }
   .hero-date {
-    font-size: 36px;
-    font-weight: 800;
+    font-family: var(--font-data);
+    font-size: 42px;
+    font-weight: 700;
     color: #fff;
-    letter-spacing: 1px;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    letter-spacing: 2px;
+    text-shadow: 0 0 30px rgba(0,212,255,0.4);
   }
   .hero-weekday {
-    font-size: 16px;
-    color: rgba(255,255,255,0.8);
+    font-family: var(--font-data);
+    font-size: 14px;
+    color: var(--accent);
     font-weight: 500;
-    margin-top: 2px;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    margin-top: 4px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
   }
   .hero-location {
-    font-size: 12px;
-    color: rgba(255,255,255,0.6);
-    margin-top: 6px;
+    font-family: var(--font-label);
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 8px;
+    letter-spacing: 1px;
   }
 
-  .content { padding: 20px 24px; }
+  .content { padding: 20px 16px; }
 
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    padding-bottom: 12px;
+    padding-bottom: 14px;
     border-bottom: 1px solid var(--border);
   }
   .header h1 {
-    font-size: 20px;
+    font-family: var(--font-data);
+    font-size: 16px;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
   }
-  .header h1 span { color: var(--accent); }
+  .header h1 span {
+    color: var(--accent);
+    text-shadow: 0 0 12px rgba(0,212,255,0.4);
+  }
   .header-right {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
   }
   .clock {
-    font-size: 14px;
+    font-family: var(--font-data);
+    font-size: 12px;
     color: var(--text-muted);
     font-variant-numeric: tabular-nums;
+    letter-spacing: 1px;
   }
   .status-dot {
     width: 8px; height: 8px;
     background: var(--green);
     border-radius: 50%;
     animation: pulse 2s infinite;
+    box-shadow: 0 0 8px rgba(0,230,118,0.6);
   }
   @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(0,230,118,0.6); }
+    50% { opacity: 0.4; box-shadow: 0 0 4px rgba(0,230,118,0.2); }
   }
 
+  /* Stats grid */
   .grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 12px;
+    gap: 8px;
     margin-bottom: 20px;
   }
   .stat-card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
+    border-radius: 8px;
+    padding: 14px 12px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.4;
+  }
+  .stat-card:hover {
+    border-color: var(--border-glow);
   }
   .stat-card .label {
-    font-size: 11px;
+    font-family: var(--font-label);
+    font-size: 10px;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+    font-weight: 500;
   }
   .stat-card .value {
+    font-family: var(--font-data);
     font-size: 28px;
     font-weight: 700;
+    letter-spacing: -1px;
   }
   .stat-card .sub {
-    font-size: 11px;
+    font-family: var(--font-label);
+    font-size: 10px;
     color: var(--text-muted);
-    margin-top: 4px;
+    margin-top: 6px;
+    line-height: 1.3;
   }
-  .value.red { color: var(--red); }
-  .value.orange { color: var(--orange); }
-  .value.green { color: var(--green); }
-  .value.accent { color: var(--accent); }
+  .value.red { color: var(--red); text-shadow: 0 0 12px rgba(255,59,92,0.4); }
+  .value.orange { color: var(--orange); text-shadow: 0 0 12px rgba(255,184,0,0.4); }
+  .value.green { color: var(--green); text-shadow: 0 0 12px rgba(0,230,118,0.4); }
+  .value.accent { color: var(--accent); text-shadow: 0 0 12px rgba(0,212,255,0.4); }
 
-  /* 音声入力エリア */
+  /* Voice input */
   .voice-input-area {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
+    border-radius: 8px;
+    padding: 12px 14px;
     margin-bottom: 20px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    transition: border-color 0.3s;
+  }
+  .voice-input-area:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 16px rgba(0,212,255,0.1);
   }
   .voice-btn {
-    width: 44px; height: 44px;
+    width: 42px; height: 42px;
     border-radius: 50%;
     border: 2px solid var(--accent);
-    background: rgba(56,189,248,0.1);
+    background: rgba(0,212,255,0.06);
     color: var(--accent);
-    font-size: 20px;
+    font-size: 18px;
     cursor: pointer;
     flex-shrink: 0;
     transition: all 0.3s;
@@ -227,16 +308,17 @@
     align-items: center;
     justify-content: center;
   }
-  .voice-btn:hover { background: rgba(56,189,248,0.2); transform: scale(1.05); }
+  .voice-btn:hover { background: rgba(0,212,255,0.15); transform: scale(1.08); }
   .voice-btn.recording {
     border-color: var(--red);
-    background: rgba(248,113,113,0.2);
+    background: rgba(255,59,92,0.15);
     color: var(--red);
     animation: pulse-record 1s infinite;
+    box-shadow: 0 0 16px rgba(255,59,92,0.3);
   }
   @keyframes pulse-record {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(248,113,113,0.4); }
-    50% { box-shadow: 0 0 0 10px rgba(248,113,113,0); }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,59,92,0.4); }
+    50% { box-shadow: 0 0 0 10px rgba(255,59,92,0); }
   }
   .voice-input-text {
     flex: 1;
@@ -244,27 +326,34 @@
     border: none;
     color: var(--text);
     font-size: 14px;
+    font-family: var(--font-label);
     outline: none;
-    font-family: inherit;
   }
   .voice-input-text::placeholder { color: var(--text-muted); }
   .voice-add-btn {
     background: var(--accent);
-    color: var(--bg);
+    color: #000;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     padding: 8px 16px;
-    font-size: 13px;
-    font-weight: 600;
+    font-family: var(--font-data);
+    font-size: 12px;
+    font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.2s;
   }
-  .voice-add-btn:hover { opacity: 0.9; }
+  .voice-add-btn:hover { opacity: 0.85; box-shadow: 0 0 12px rgba(0,212,255,0.3); }
+  .voice-add-btn:active { transform: scale(0.96); }
   .voice-status {
+    font-family: var(--font-data);
     font-size: 11px;
     color: var(--text-muted);
     margin-top: 6px;
     padding-left: 56px;
+    letter-spacing: 0.5px;
   }
 
   .main-grid {
@@ -272,69 +361,91 @@
     grid-template-columns: 2fr 1fr;
     gap: 20px;
   }
+
+  /* Card base */
   .card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
+    border-radius: 8px;
+    padding: 18px 16px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .card:hover {
+    border-color: var(--border-glow);
+    box-shadow: 0 0 20px rgba(0,212,255,0.04);
   }
   .card h2 {
-    font-size: 15px;
+    font-family: var(--font-data);
+    font-size: 12px;
     font-weight: 600;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     display: flex;
     align-items: center;
     gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
   }
   .card h2 .badge {
-    font-size: 11px;
+    font-family: var(--font-data);
+    font-size: 10px;
     background: var(--accent);
-    color: var(--bg);
+    color: #000;
     padding: 2px 8px;
-    border-radius: 10px;
+    border-radius: 4px;
     font-weight: 700;
+    letter-spacing: 0;
+    box-shadow: 0 0 8px rgba(0,212,255,0.3);
   }
-  .badge.urgent { background: var(--red); }
+  .badge.urgent {
+    background: var(--red);
+    box-shadow: 0 0 8px rgba(255,59,92,0.3);
+  }
 
+  /* TODO items */
   .todo-item {
     display: flex;
     align-items: flex-start;
     gap: 10px;
     padding: 10px 0;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid rgba(26,26,46,0.6);
     font-size: 13px;
     line-height: 1.5;
+    transition: opacity 0.3s, background 0.2s;
   }
   .todo-item:last-child { border-bottom: none; }
+  .todo-item:hover { background: rgba(0,212,255,0.02); }
   .todo-check {
     width: 22px; height: 22px;
-    border: 2px solid #64748b;
-    border-radius: 6px;
+    border: 2px solid var(--text-muted);
+    border-radius: 4px;
     flex-shrink: 0;
     margin-top: 1px;
     cursor: pointer;
     transition: all 0.2s;
     position: relative;
-    background: rgba(255,255,255,0.05);
+    background: rgba(255,255,255,0.02);
   }
   .todo-check:hover {
     border-color: var(--green);
-    background: rgba(74, 222, 128, 0.15);
+    background: rgba(0,230,118,0.1);
     transform: scale(1.1);
-    box-shadow: 0 0 8px rgba(74, 222, 128, 0.3);
+    box-shadow: 0 0 10px rgba(0,230,118,0.2);
   }
   .todo-check.done {
     background: var(--green);
     border-color: var(--green);
-    box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
+    box-shadow: 0 0 12px rgba(0,230,118,0.4);
   }
   .todo-check.done::after {
     content: '\2713';
     position: absolute;
     top: 0px; left: 3px;
     font-size: 15px;
-    color: var(--bg);
+    color: #000;
     font-weight: 700;
   }
   .todo-item.completed .todo-title {
@@ -346,9 +457,9 @@
     opacity: 0.4;
   }
   .todo-content { flex: 1; }
-  .todo-title { color: var(--text); transition: all 0.3s; }
+  .todo-title { color: var(--text); transition: all 0.3s; font-family: var(--font-label); }
 
-  /* 対応不要ボタン */
+  /* Action buttons */
   .todo-actions {
     display: flex;
     gap: 4px;
@@ -357,7 +468,7 @@
   }
   .todo-skip-btn, .todo-delete-btn {
     width: 26px; height: 26px;
-    border-radius: 6px;
+    border-radius: 4px;
     border: 1px solid var(--border);
     background: transparent;
     cursor: pointer;
@@ -369,31 +480,33 @@
     color: var(--text-muted);
   }
   .todo-skip-btn:hover {
-    border-color: var(--yellow);
-    background: rgba(250,204,21,0.1);
-    color: var(--yellow);
+    border-color: var(--orange);
+    background: rgba(255,184,0,0.1);
+    color: var(--orange);
+    box-shadow: 0 0 8px rgba(255,184,0,0.15);
   }
   .todo-delete-btn:hover {
     border-color: var(--red);
-    background: rgba(248,113,113,0.1);
+    background: rgba(255,59,92,0.1);
     color: var(--red);
+    box-shadow: 0 0 8px rgba(255,59,92,0.15);
   }
-  .todo-item.skipped {
-    opacity: 0.4;
-  }
+  .todo-item.skipped { opacity: 0.35; }
   .todo-item.skipped .todo-title {
     text-decoration: line-through;
     color: var(--text-muted);
   }
   .todo-item.skipped .skip-label {
     display: inline-block;
-    font-size: 10px;
-    background: rgba(250,204,21,0.15);
-    color: var(--yellow);
+    font-family: var(--font-data);
+    font-size: 9px;
+    background: rgba(255,184,0,0.12);
+    color: var(--orange);
     padding: 1px 6px;
-    border-radius: 4px;
+    border-radius: 3px;
     font-weight: 600;
     margin-left: 6px;
+    letter-spacing: 0.5px;
   }
   .skip-label { display: none; }
   .todo-item.moving {
@@ -402,19 +515,19 @@
     transform: translateX(20px);
   }
 
-  /* 褒めポップアップ */
+  /* Praise popup */
   .praise-toast {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0);
-    background: linear-gradient(135deg, #1e293b, #0f172a);
-    border: 2px solid var(--green);
-    border-radius: 16px;
+    background: linear-gradient(135deg, #0a0a0f, #000);
+    border: 1px solid var(--green);
+    border-radius: 12px;
     padding: 32px 48px;
     text-align: center;
     z-index: 1000;
-    box-shadow: 0 0 60px rgba(74, 222, 128, 0.3);
+    box-shadow: 0 0 80px rgba(0,230,118,0.25), inset 0 0 40px rgba(0,230,118,0.05);
     animation: popIn 0.4s ease forwards;
   }
   .praise-toast.hide {
@@ -429,8 +542,8 @@
     to { transform: translate(-50%, -50%) scale(0); opacity: 0; }
   }
   .praise-emoji { font-size: 48px; margin-bottom: 12px; }
-  .praise-text { font-size: 18px; font-weight: 700; color: var(--green); margin-bottom: 6px; }
-  .praise-sub { font-size: 13px; color: var(--text-muted); }
+  .praise-text { font-family: var(--font-data); font-size: 18px; font-weight: 700; color: var(--green); margin-bottom: 6px; text-shadow: 0 0 16px rgba(0,230,118,0.5); }
+  .praise-sub { font-family: var(--font-label); font-size: 13px; color: var(--text-muted); }
 
   .confetti {
     position: fixed;
@@ -446,122 +559,163 @@
   .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.4);
+    background: rgba(0,0,0,0.7);
     z-index: 998;
+    backdrop-filter: blur(4px);
   }
   .todo-meta {
-    font-size: 11px;
+    font-family: var(--font-data);
+    font-size: 10px;
     color: var(--text-muted);
-    margin-top: 3px;
+    margin-top: 4px;
+    letter-spacing: 0.3px;
   }
   .priority-high {
     display: inline-block;
-    font-size: 10px;
-    background: rgba(248, 113, 113, 0.15);
+    font-family: var(--font-data);
+    font-size: 9px;
+    background: rgba(255,59,92,0.12);
     color: var(--red);
-    padding: 1px 6px;
-    border-radius: 4px;
+    padding: 2px 7px;
+    border-radius: 3px;
     font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
   }
   .priority-normal {
     display: inline-block;
-    font-size: 10px;
-    background: rgba(56, 189, 248, 0.15);
+    font-family: var(--font-data);
+    font-size: 9px;
+    background: rgba(0,212,255,0.1);
     color: var(--accent);
-    padding: 1px 6px;
-    border-radius: 4px;
+    padding: 2px 7px;
+    border-radius: 3px;
     font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
   }
 
+  /* Alert items */
   .alert-item {
     display: flex;
     align-items: flex-start;
     gap: 10px;
     padding: 12px;
-    background: rgba(248, 113, 113, 0.08);
-    border: 1px solid rgba(248, 113, 113, 0.2);
-    border-radius: 8px;
-    margin-bottom: 10px;
+    background: rgba(255,59,92,0.04);
+    border: 1px solid rgba(255,59,92,0.15);
+    border-left: 3px solid var(--red);
+    border-radius: 6px;
+    margin-bottom: 8px;
     font-size: 13px;
+    transition: background 0.2s;
   }
+  .alert-item:hover { background: rgba(255,59,92,0.08); }
   .alert-item.warn {
-    background: rgba(251, 146, 60, 0.08);
-    border-color: rgba(251, 146, 60, 0.2);
+    background: rgba(255,184,0,0.04);
+    border-color: rgba(255,184,0,0.15);
+    border-left-color: var(--orange);
   }
   .alert-icon { font-size: 16px; flex-shrink: 0; }
   .alert-content .alert-title {
     font-weight: 600;
     margin-bottom: 2px;
+    font-family: var(--font-label);
   }
   .alert-content .alert-desc {
-    font-size: 12px;
+    font-family: var(--font-data);
+    font-size: 11px;
     color: var(--text-muted);
+    letter-spacing: 0.3px;
   }
 
+  /* Draft items */
   .draft-item {
     padding: 10px 0;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid rgba(26,26,46,0.6);
     font-size: 13px;
   }
   .draft-item:last-child { border-bottom: none; }
   .draft-to {
+    font-family: var(--font-data);
     font-weight: 600;
     color: var(--accent);
-    font-size: 12px;
+    font-size: 11px;
+    letter-spacing: 0.5px;
   }
   .draft-subject {
-    margin-top: 3px;
+    margin-top: 4px;
     color: var(--text);
+    font-family: var(--font-label);
   }
   .draft-status {
-    font-size: 11px;
-    color: var(--yellow);
-    margin-top: 3px;
+    font-family: var(--font-data);
+    font-size: 10px;
+    color: var(--orange);
+    margin-top: 4px;
+    letter-spacing: 0.5px;
   }
 
-  /* スケジュール */
+  /* Schedule */
   .schedule-item {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(26,26,46,0.6);
     font-size: 13px;
   }
   .schedule-item:last-child { border-bottom: none; }
   .schedule-time {
+    font-family: var(--font-data);
     min-width: 55px;
     font-size: 12px;
     font-weight: 600;
     color: var(--accent);
     flex-shrink: 0;
+    letter-spacing: 0.5px;
   }
-  .schedule-title { color: var(--text); }
+  .schedule-title { color: var(--text); font-family: var(--font-label); }
   .schedule-allday {
-    background: rgba(56,189,248,0.15);
+    font-family: var(--font-data);
+    background: rgba(0,212,255,0.1);
     color: var(--accent);
-    font-size: 10px;
-    padding: 1px 6px;
-    border-radius: 4px;
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
   }
 
-  /* 秘書プロフィール */
+  /* Secretary profile */
   .secretary-profile {
     display: flex;
     align-items: center;
     gap: 14px;
     padding: 16px;
-    background: linear-gradient(135deg, rgba(56,189,248,0.08), rgba(74,222,128,0.05));
-    border: 1px solid rgba(56,189,248,0.2);
-    border-radius: 12px;
-    margin-bottom: 16px;
+    background: linear-gradient(135deg, rgba(0,212,255,0.04), rgba(0,230,118,0.02));
+    border: 1px solid rgba(0,212,255,0.12);
+    border-radius: 8px;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .secretary-profile::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.4;
   }
   .secretary-avatar-wrap {
     width: 160px; height: 160px;
     border-radius: 50%;
-    border: 3px solid var(--accent);
+    border: 2px solid var(--accent);
     flex-shrink: 0;
-    box-shadow: 0 0 16px rgba(56,189,248,0.3);
+    box-shadow: 0 0 24px rgba(0,212,255,0.2);
     overflow: hidden;
     position: relative;
   }
@@ -571,42 +725,58 @@
     transform: scale(2.0) translate(-1%, 10%);
   }
   .secretary-info .secretary-name {
+    font-family: var(--font-data);
     font-weight: 700;
-    font-size: 14px;
+    font-size: 13px;
     color: var(--accent);
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(0,212,255,0.3);
   }
   .secretary-info .secretary-role {
-    font-size: 12px;
+    font-family: var(--font-label);
+    font-size: 11px;
     color: var(--text-muted);
-    margin-top: 2px;
+    margin-top: 3px;
   }
   .secretary-info .secretary-msg {
+    font-family: var(--font-label);
     font-size: 12px;
     color: var(--text);
-    margin-top: 6px;
+    margin-top: 8px;
     font-style: italic;
+    opacity: 0.8;
   }
 
+  /* Department list */
   .dept-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
   .dept-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 12px;
-    background: rgba(255,255,255,0.03);
-    border-radius: 8px;
+    background: rgba(255,255,255,0.015);
+    border: 1px solid rgba(26,26,46,0.4);
+    border-radius: 6px;
     font-size: 13px;
+    transition: all 0.2s;
   }
-  .dept-item .dept-name { font-weight: 500; }
+  .dept-item:hover {
+    background: rgba(0,212,255,0.03);
+    border-color: rgba(0,212,255,0.1);
+  }
+  .dept-item .dept-name { font-weight: 500; font-family: var(--font-label); }
   .dept-item .dept-stat {
-    font-size: 12px;
+    font-family: var(--font-data);
+    font-size: 11px;
     color: var(--text-muted);
+    letter-spacing: 0.5px;
   }
 
+  /* Timeline */
   .timeline {
     position: relative;
     padding-left: 20px;
@@ -617,8 +787,8 @@
     left: 6px;
     top: 4px;
     bottom: 4px;
-    width: 2px;
-    background: var(--border);
+    width: 1px;
+    background: linear-gradient(180deg, var(--accent), var(--border), transparent);
   }
   .timeline-item {
     position: relative;
@@ -630,86 +800,176 @@
     position: absolute;
     left: -17px;
     top: 14px;
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: var(--accent);
+    box-shadow: 0 0 8px rgba(0,212,255,0.4);
   }
-  .timeline-item.urgent::before { background: var(--red); }
+  .timeline-item.urgent::before {
+    background: var(--red);
+    box-shadow: 0 0 8px rgba(255,59,92,0.4);
+  }
   .timeline-date {
-    font-size: 11px;
+    font-family: var(--font-data);
+    font-size: 10px;
     color: var(--text-muted);
     font-weight: 600;
+    letter-spacing: 1px;
   }
   .timeline-text {
-    margin-top: 2px;
+    margin-top: 3px;
     color: var(--text);
+    font-family: var(--font-label);
   }
 
-  /* desknet'sチェックリスト */
+  /* Desknet's checklist */
   .desknet-check {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
   .desknet-item {
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 10px 12px;
-    background: rgba(255,255,255,0.03);
-    border-radius: 8px;
+    background: rgba(255,255,255,0.015);
+    border: 1px solid rgba(26,26,46,0.4);
+    border-radius: 6px;
     font-size: 13px;
     cursor: pointer;
     transition: all 0.2s;
   }
   .desknet-item:hover {
-    background: rgba(255,255,255,0.06);
+    background: rgba(0,212,255,0.03);
+    border-color: rgba(0,212,255,0.1);
   }
+  .desknet-item:active { transform: scale(0.98); }
   .desknet-icon {
     font-size: 16px;
     flex-shrink: 0;
   }
-  .desknet-label { flex: 1; }
+  .desknet-label { flex: 1; font-family: var(--font-label); }
   .desknet-status {
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 10px;
+    font-family: var(--font-data);
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
     font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
   }
   .desknet-status.pending {
-    background: rgba(250,204,21,0.15);
-    color: var(--yellow);
+    background: rgba(255,184,0,0.1);
+    color: var(--orange);
+    border: 1px solid rgba(255,184,0,0.2);
   }
   .desknet-status.ok {
-    background: rgba(74,222,128,0.15);
+    background: rgba(0,230,118,0.1);
     color: var(--green);
+    border: 1px solid rgba(0,230,118,0.2);
   }
 
+  /* Google Drive links */
+  .drive-link-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.015);
+    border: 1px solid rgba(26,26,46,0.4);
+    border-radius: 6px;
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.2s;
+    margin-bottom: 6px;
+  }
+  .drive-link-item:last-child { margin-bottom: 0; }
+  .drive-link-item:hover {
+    background: rgba(0,212,255,0.04);
+    border-color: rgba(0,212,255,0.15);
+    color: var(--accent);
+  }
+  .drive-link-item .drive-icon { font-size: 18px; flex-shrink: 0; }
+  .drive-link-item .drive-name { flex: 1; font-family: var(--font-label); font-size: 12px; }
+  .drive-link-item .drive-arrow { font-family: var(--font-data); font-size: 10px; color: var(--text-muted); letter-spacing: 0.5px; }
+
+  /* TimeTree sync card */
+  .sync-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 12px;
+    background: rgba(255,255,255,0.015);
+    border: 1px solid rgba(26,26,46,0.4);
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .sync-row:last-of-type { margin-bottom: 0; }
+  .sync-label { font-family: var(--font-label); }
+  .sync-badge {
+    font-family: var(--font-data);
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .sync-badge.ok {
+    background: rgba(0,230,118,0.1);
+    color: var(--green);
+    border: 1px solid rgba(0,230,118,0.2);
+  }
+  .sync-badge.warn {
+    background: rgba(255,184,0,0.1);
+    color: var(--orange);
+    border: 1px solid rgba(255,184,0,0.2);
+  }
+  .sync-badge.pending {
+    background: rgba(0,212,255,0.08);
+    color: var(--accent);
+    border: 1px solid rgba(0,212,255,0.15);
+  }
+
+  /* Footer */
   .footer {
     margin-top: 24px;
-    padding: 16px 24px;
+    padding: 16px;;
     border-top: 1px solid var(--border);
-    font-size: 11px;
+    font-family: var(--font-data);
+    font-size: 10px;
     color: var(--text-muted);
     display: flex;
     justify-content: space-between;
+    letter-spacing: 0.5px;
   }
 
   @media (max-width: 900px) {
     .grid { grid-template-columns: 1fr 1fr; }
     .main-grid { grid-template-columns: 1fr; }
-    .hero-photo { height: 200px; }
-    .hero-date { font-size: 28px; }
+    .hero-photo { height: 220px; }
+    .hero-date { font-size: 36px; }
+  }
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+    .stat-card { padding: 12px 10px; }
+    .stat-card .value { font-size: 24px; }
+    .stat-card .label { font-size: 9px; }
+    .content { padding: 16px 12px; }
+    .card { padding: 14px 12px; }
   }
 </style>
 </head>
 <body>
 
-<!-- プルトゥリフレッシュ インジケーター -->
+<!-- Pull to refresh indicator -->
 <div class="pull-indicator" id="pull-indicator">&#x21BB;</div>
 
-<!-- ヒーロー写真 + 日付 -->
+<!-- Hero photo + date -->
 <div class="hero-photo">
   <button class="refresh-btn" id="refresh-btn" title="更新">&#x21BB;</button>
   <img id="hero-img" src="" alt="Today's view">
@@ -730,12 +990,12 @@
   </div>
 </div>
 
-<!-- 統計 -->
+<!-- Stats -->
 <div class="grid">
   <div class="stat-card">
     <div class="label">本日のTODO</div>
-    <div class="value red" id="stat-todo">8</div>
-    <div class="sub" id="stat-todo-sub">最優先 5件 / 通常 3件</div>
+    <div class="value red" id="stat-todo">24</div>
+    <div class="sub" id="stat-todo-sub">最優先 11件 / 通常 14件</div>
   </div>
   <div class="stat-card">
     <div class="label">緊急アラート</div>
@@ -754,7 +1014,7 @@
   </div>
 </div>
 
-<!-- 音声入力 TODO追加 -->
+<!-- Voice input TODO add -->
 <div class="voice-input-area">
   <button class="voice-btn" id="voice-btn" title="音声入力">&#x1F3A4;</button>
   <input type="text" class="voice-input-text" id="voice-input" placeholder="タスクを入力 or マイクで音声入力...">
@@ -763,79 +1023,79 @@
 <div class="voice-status" id="voice-status"></div>
 
 <div class="main-grid">
-  <!-- 左カラム -->
+  <!-- Left column -->
   <div>
-    <!-- 今日のスケジュール -->
+    <!-- Today's schedule -->
     <div class="card" id="schedule-section">
       <h2>今日のスケジュール <span class="badge" style="background:var(--accent);" id="schedule-count">0</span></h2>
       <div id="schedule-list">
-        <div style="color:var(--text-muted);font-size:13px;padding:8px 0;">予定なし — ゆっくり休んでくださいね（日曜日）</div>
+        <div style="color:var(--text-muted);font-size:13px;padding:8px 0;">&#x1F501; TimeTreeと同期中... / 予定なし</div>
       </div>
       <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
-        <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">明日以降の予定</div>
+        <div style="font-family:var(--font-data);font-size:10px;font-weight:600;color:var(--text-muted);margin-bottom:8px;letter-spacing:1.5px;text-transform:uppercase;">明日以降の予定</div>
         <div id="upcoming-list">
-          <div style="font-size:12px;font-weight:700;color:var(--accent);margin:10px 0 4px;">3/23（月）</div>
+          <div style="font-family:var(--font-data);font-size:11px;font-weight:700;color:var(--accent);margin:10px 0 4px;letter-spacing:1px;">3/23（月）</div>
           <div class="schedule-item"><div class="schedule-allday">終日</div><div class="schedule-title">高山出張</div></div>
           <div class="schedule-item"><div class="schedule-allday">終日</div><div class="schedule-title">3760 3764 WARP処理</div></div>
           <div class="schedule-item"><div class="schedule-allday">終日</div><div class="schedule-title">3138 使用前自己確認 善久さん返信</div></div>
           <div class="schedule-item"><div class="schedule-allday">終日</div><div class="schedule-title">1280 1281 使用前自己確認提出催促</div></div>
           <div class="schedule-item"><div class="schedule-time">14:30</div><div class="schedule-title">丸越商事訪問</div></div>
           <div class="schedule-item"><div class="schedule-time">19:00</div><div class="schedule-title">会食（大衆居酒屋あじ平）柴田商事2名・丸山・山本</div></div>
-          <div style="font-size:12px;font-weight:700;color:var(--accent);margin:10px 0 4px;">3/24（火）</div>
+          <div style="font-family:var(--font-data);font-size:11px;font-weight:700;color:var(--accent);margin:10px 0 4px;letter-spacing:1px;">3/24（火）</div>
           <div class="schedule-item"><div class="schedule-time">09:00</div><div class="schedule-title">大前さん訪問</div></div>
           <div class="schedule-item"><div class="schedule-time">16:30</div><div class="schedule-title">永山医院</div></div>
-          <div style="font-size:12px;font-weight:700;color:var(--accent);margin:10px 0 4px;">3/25（水）</div>
+          <div style="font-family:var(--font-data);font-size:11px;font-weight:700;color:var(--accent);margin:10px 0 4px;letter-spacing:1px;">3/25（水）</div>
           <div class="schedule-item"><div class="schedule-allday">終日</div><div class="schedule-title">税務署</div></div>
           <div class="schedule-item"><div class="schedule-time">10:30</div><div class="schedule-title">橋本さん(スターティア)来社</div></div>
           <div class="schedule-item"><div class="schedule-time">14:00</div><div class="schedule-title">リンくん事務所</div></div>
           <div class="schedule-item"><div class="schedule-time">18:00</div><div class="schedule-title">太陽光ナレッジミーティング（學AI）</div></div>
           <div class="schedule-item"><div class="schedule-time">18:00</div><div class="schedule-title">内君会食</div></div>
-          <div style="font-size:12px;font-weight:700;color:var(--accent);margin:10px 0 4px;">3/26（木）</div>
+          <div style="font-family:var(--font-data);font-size:11px;font-weight:700;color:var(--accent);margin:10px 0 4px;letter-spacing:1px;">3/26（木）</div>
           <div class="schedule-item"><div class="schedule-time">11:00</div><div class="schedule-title">蓄電池土地打ち合わせ</div></div>
-          <div style="font-size:12px;font-weight:700;color:var(--accent);margin:10px 0 4px;">3/27（金）</div>
+          <div style="font-family:var(--font-data);font-size:11px;font-weight:700;color:var(--accent);margin:10px 0 4px;letter-spacing:1px;">3/27（金）</div>
           <div class="schedule-item"><div class="schedule-time">18:00</div><div class="schedule-title">アチーブメント</div></div>
-          <div style="font-size:12px;font-weight:700;color:var(--accent);margin:10px 0 4px;">3/28（土）</div>
+          <div style="font-family:var(--font-data);font-size:11px;font-weight:700;color:var(--accent);margin:10px 0 4px;letter-spacing:1px;">3/28（土）</div>
           <div class="schedule-item"><div class="schedule-time">17:00</div><div class="schedule-title">パーマ</div></div>
-          <div style="font-size:12px;font-weight:700;color:var(--accent);margin:10px 0 4px;">3/31（月）</div>
+          <div style="font-family:var(--font-data);font-size:11px;font-weight:700;color:var(--accent);margin:10px 0 4px;letter-spacing:1px;">3/31（月）</div>
           <div class="schedule-item"><div class="schedule-time">13:00</div><div class="schedule-title">ナレッジ共有会</div></div>
         </div>
       </div>
     </div>
 
-    <!-- アラート -->
+    <!-- Alerts -->
     <div class="card">
       <h2>アラート <span class="badge urgent">3</span></h2>
       <div class="alert-item">
         <div class="alert-icon">&#x1F534;</div>
         <div class="alert-content">
-          <div class="alert-title">案件 #2796 - 名義変更 22日超過</div>
+          <div class="alert-title">案件 #2796 - 名義変更 <span style="color:var(--red);font-weight:800;">53日超過</span></div>
           <div class="alert-desc">連系予定日: 2026/02/28 | 名変: 未対応 | 文書準備: 進行中</div>
         </div>
       </div>
       <div class="alert-item">
         <div class="alert-icon">&#x1F534;</div>
         <div class="alert-content">
-          <div class="alert-title">案件 #3139 - 名義変更 21日超過</div>
+          <div class="alert-title">案件 #3139 - 名義変更 <span style="color:var(--red);font-weight:800;">52日超過</span></div>
           <div class="alert-desc">連系予定日: 2026/03/01 | 名変: 未対応 | 文書準備: 進行中</div>
         </div>
       </div>
       <div class="alert-item">
         <div class="alert-icon">&#x1F534;</div>
         <div class="alert-content">
-          <div class="alert-title">案件 #2797 - 名義変更 2日超過</div>
+          <div class="alert-title">案件 #2797 - 名義変更 <span style="color:var(--red);font-weight:800;">33日超過</span></div>
           <div class="alert-desc">連系予定日: 2026/03/20 | 名変: 未対応 | 至急対応が必要</div>
         </div>
       </div>
     </div>
 
-    <!-- 最優先タスク -->
+    <!-- Urgent tasks -->
     <div class="card" id="urgent-tasks">
-      <h2>最優先タスク <span class="badge urgent" id="urgent-count">5</span></h2>
+      <h2>最優先タスク <span class="badge urgent" id="urgent-count">11</span></h2>
       <div class="todo-item" data-id="u1">
         <div class="todo-check"></div>
         <div class="todo-content">
-          <div class="todo-title">auRE 名義変更: 案件 #2796, #3139, #2797 の名変を至急対応</div>
-          <div class="todo-meta"><span class="priority-high">最優先</span> 期限: 3/20 (済) <span class="skip-label">対応不要</span></div>
+          <div class="todo-title">九電 田端様: カルド大口蓄電池(35323) 接続検討申込書 修正依頼（3回目）</div>
+          <div class="todo-meta"><span class="priority-high">最優先</span> 3/22受信 <span class="skip-label">対応不要</span></div>
         </div>
         <div class="todo-actions">
           <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
@@ -845,8 +1105,8 @@
       <div class="todo-item" data-id="u2">
         <div class="todo-check"></div>
         <div class="todo-content">
-          <div class="todo-title">auRE 善久様: 案件 #3763 東電WEB申込システムの受電側キャプチャを送付</div>
-          <div class="todo-meta"><span class="priority-high">最優先</span> 期限: 3/21 <span class="skip-label">対応不要</span></div>
+          <div class="todo-title">丸山さん転送: 九電 接続検討申込書(34179) 対応</div>
+          <div class="todo-meta"><span class="priority-high">最優先</span> 3/23受信 <span class="skip-label">対応不要</span></div>
         </div>
         <div class="todo-actions">
           <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
@@ -856,8 +1116,8 @@
       <div class="todo-item" data-id="u3">
         <div class="todo-check"></div>
         <div class="todo-content">
-          <div class="todo-title">auRE 善久様: 別紙1-4 R列を正式発電所名に修正、Q列・S列を半角カタカナに（次回から対応）</div>
-          <div class="todo-meta"><span class="priority-high">最優先</span> 期限: 3/21 <span class="skip-label">対応不要</span></div>
+          <div class="todo-title">中部電力PG 高山: 飛騨高山蓄電池B 発電量調整契約を正しい宛先へ再送</div>
+          <div class="todo-meta"><span class="priority-high">最優先</span> 3/23受信 <span class="skip-label">対応不要</span></div>
         </div>
         <div class="todo-actions">
           <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
@@ -867,8 +1127,8 @@
       <div class="todo-item" data-id="u4">
         <div class="todo-check"></div>
         <div class="todo-content">
-          <div class="todo-title">柴田商事 見澤様 / auRE: 使用前自己確認届出書 - 対象案件一覧を確認し準備</div>
-          <div class="todo-meta"><span class="priority-high">最優先</span> 期限: 3/23 (月) <span class="skip-label">対応不要</span></div>
+          <div class="todo-title">東電PG: 接続検討回答(JK25GHZ035685) 内容確認＋次ステップ判断</div>
+          <div class="todo-meta"><span class="priority-high">最優先</span> 3/17受信 <span class="skip-label">対応不要</span></div>
         </div>
         <div class="todo-actions">
           <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
@@ -878,8 +1138,74 @@
       <div class="todo-item" data-id="u5">
         <div class="todo-check"></div>
         <div class="todo-content">
-          <div class="todo-title">関電 藤田様: ゲンマ阪南奥蓄電所 様式6（土地調査結果）の準備・提出</div>
+          <div class="todo-title">東電PG 成田支社: 用地交渉(8ACL746) 不成立報告の確認＋次アクション</div>
+          <div class="todo-meta"><span class="priority-high">最優先</span> 3/19受信 <span class="skip-label">対応不要</span></div>
+        </div>
+        <div class="todo-actions">
+          <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
+          <button class="todo-delete-btn" title="削除">&#x2715;</button>
+        </div>
+      </div>
+      <div class="todo-item" data-id="u6">
+        <div class="todo-check"></div>
+        <div class="todo-content">
+          <div class="todo-title">関電 藤田様: ゲンマ阪南奥蓄電所 様式6（土地調査結果）の提出</div>
           <div class="todo-meta"><span class="priority-high">最優先</span> 期限: 4月中旬 <span class="skip-label">対応不要</span></div>
+        </div>
+        <div class="todo-actions">
+          <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
+          <button class="todo-delete-btn" title="削除">&#x2715;</button>
+        </div>
+      </div>
+      <div class="todo-item" data-id="u7">
+        <div class="todo-check"></div>
+        <div class="todo-content">
+          <div class="todo-title">auRE 善久様: #3763 地位移転書類修正（R列不一致）＋ 東電WEB受電キャプチャ送付</div>
+          <div class="todo-meta"><span class="priority-high">最優先</span> 3/17受信 <span class="skip-label">対応不要</span></div>
+        </div>
+        <div class="todo-actions">
+          <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
+          <button class="todo-delete-btn" title="削除">&#x2715;</button>
+        </div>
+      </div>
+      <div class="todo-item" data-id="u8">
+        <div class="todo-check"></div>
+        <div class="todo-content">
+          <div class="todo-title">エナジートラスト 齋藤様: 3760・3764 完工請求書の確認・支払処理</div>
+          <div class="todo-meta"><span class="priority-high">最優先</span> 3/24受信 <span class="skip-label">対応不要</span></div>
+        </div>
+        <div class="todo-actions">
+          <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
+          <button class="todo-delete-btn" title="削除">&#x2715;</button>
+        </div>
+      </div>
+      <div class="todo-item" data-id="u9">
+        <div class="todo-check"></div>
+        <div class="todo-content">
+          <div class="todo-title">有方氏: エクソソーム請求書の確認・支払処理</div>
+          <div class="todo-meta"><span class="priority-high">最優先</span> 3/23受信 <span class="skip-label">対応不要</span></div>
+        </div>
+        <div class="todo-actions">
+          <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
+          <button class="todo-delete-btn" title="削除">&#x2715;</button>
+        </div>
+      </div>
+      <div class="todo-item" data-id="u10">
+        <div class="todo-check"></div>
+        <div class="todo-content">
+          <div class="todo-title">オークモント 雨宮様: TAOKE展示会 御礼返信（蓄電所案件・VPPA提案）</div>
+          <div class="todo-meta"><span class="priority-high">最優先</span> 3/23受信 <span class="skip-label">対応不要</span></div>
+        </div>
+        <div class="todo-actions">
+          <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
+          <button class="todo-delete-btn" title="削除">&#x2715;</button>
+        </div>
+      </div>
+      <div class="todo-item" data-id="u11">
+        <div class="todo-check"></div>
+        <div class="todo-content">
+          <div class="todo-title">【テック部】TimeTree連携スキル（timetree_sync.py）安定運用体制の確立</div>
+          <div class="todo-meta"><span class="priority-high">最優先</span> 3/24起票 → テック部対応中 <span class="skip-label">対応不要</span></div>
         </div>
         <div class="todo-actions">
           <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
@@ -888,14 +1214,14 @@
       </div>
     </div>
 
-    <!-- 通常タスク -->
+    <!-- Normal tasks -->
     <div class="card" id="normal-tasks">
-      <h2>通常タスク <span class="badge" id="normal-count">3</span></h2>
+      <h2>通常タスク <span class="badge" id="normal-count">14</span></h2>
       <div class="todo-item" data-id="n1">
         <div class="todo-check"></div>
         <div class="todo-content">
-          <div class="todo-title">東京電力PG 成田支社: 用地交渉・図面の追加回答を確認し、次のアクション判断</div>
-          <div class="todo-meta"><span class="priority-normal">通常</span> <span class="skip-label">対応不要</span></div>
+          <div class="todo-title">auRE 善久様: 完成図書 #1878 に #1868が混入 → 差し替え再アップ</div>
+          <div class="todo-meta"><span class="priority-normal">通常</span> 3/11受信 <span class="skip-label">対応不要</span></div>
         </div>
         <div class="todo-actions">
           <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
@@ -905,8 +1231,8 @@
       <div class="todo-item" data-id="n2">
         <div class="todo-check"></div>
         <div class="todo-content">
-          <div class="todo-title">GRITZ 佐藤様: 3/30(月) 11:00-12:00 イーエール&GRITZ MTG の出欠回答</div>
-          <div class="todo-meta"><span class="priority-normal">通常</span> 期限: 3/25 <span class="skip-label">対応不要</span></div>
+          <div class="todo-title">auRE 善久様: 低圧マスタ表 更新箇所のみ赤文字で再提出</div>
+          <div class="todo-meta"><span class="priority-normal">通常</span> 3/11受信 <span class="skip-label">対応不要</span></div>
         </div>
         <div class="todo-actions">
           <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
@@ -916,8 +1242,129 @@
       <div class="todo-item" data-id="n3">
         <div class="todo-check"></div>
         <div class="todo-content">
-          <div class="todo-title">三菱UFJ信託 海野様: 系統用蓄電所の用地情報 社内精査の進捗確認</div>
-          <div class="todo-meta"><span class="priority-normal">通常</span> <span class="skip-label">対応不要</span></div>
+          <div class="todo-title">GRITZ 佐藤様: 3/30(月) 11:00-12:00 イーエール&amp;GRITZ MTG の出欠回答</div>
+          <div class="todo-meta"><span class="priority-normal">通常</span> 期限: 3/30 <span class="skip-label">対応不要</span></div>
+        </div>
+        <div class="todo-actions">
+          <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
+          <button class="todo-delete-btn" title="削除">&#x2715;</button>
+        </div>
+      </div>
+      <div class="todo-item" data-id="n4">
+        <div class="todo-check"></div>
+        <div class="todo-content">
+          <div class="todo-title">GRITZ 佐藤様: #1869・#2795 取り下げ＋返金手続き確認</div>
+          <div class="todo-meta"><span class="priority-normal">通常</span> 3/9受信 <span class="skip-label">対応不要</span></div>
+        </div>
+        <div class="todo-actions">
+          <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
+          <button class="todo-delete-btn" title="削除">&#x2715;</button>
+        </div>
+      </div>
+      <div class="todo-item" data-id="n5">
+        <div class="todo-check"></div>
+        <div class="todo-content">
+          <div class="todo-title">三菱UFJ信託 海野様: 系統用蓄電所の用地情報 社内精査結果を正式回答</div>
+          <div class="todo-meta"><span class="priority-normal">通常</span> 3/20返信済→精査中 <span class="skip-label">対応不要</span></div>
+        </div>
+        <div class="todo-actions">
+          <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
+          <button class="todo-delete-btn" title="削除">&#x2715;</button>
+        </div>
+      </div>
+      <div class="todo-item" data-id="n6">
+        <div class="todo-check"></div>
+        <div class="todo-content">
+          <div class="todo-title">せきね不動産 関根様: 稲敷市蒲ヶ山 物件資料の検討結果を返信</div>
+          <div class="todo-meta"><span class="priority-normal">通常</span> 3/22受信 <span class="skip-label">対応不要</span></div>
+        </div>
+        <div class="todo-actions">
+          <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
+          <button class="todo-delete-btn" title="削除">&#x2715;</button>
+        </div>
+      </div>
+      <div class="todo-item" data-id="n7">
+        <div class="todo-check"></div>
+        <div class="todo-content">
+          <div class="todo-title">村松氏: #1275 連系 東電向け回答文案の修正確認</div>
+          <div class="todo-meta"><span class="priority-normal">通常</span> 2/27受信 <span class="skip-label">対応不要</span></div>
+        </div>
+        <div class="todo-actions">
+          <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
+          <button class="todo-delete-btn" title="削除">&#x2715;</button>
+        </div>
+      </div>
+      <div class="todo-item" data-id="n8">
+        <div class="todo-check"></div>
+        <div class="todo-content">
+          <div class="todo-title">九電 NSC田端様: 接続検討(34018・34020) 技術箇所の確認状況フォロー</div>
+          <div class="todo-meta"><span class="priority-normal">通常</span> 2/24受信 <span class="skip-label">対応不要</span></div>
+        </div>
+        <div class="todo-actions">
+          <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
+          <button class="todo-delete-btn" title="削除">&#x2715;</button>
+        </div>
+      </div>
+      <div class="todo-item" data-id="n9">
+        <div class="todo-check"></div>
+        <div class="todo-content">
+          <div class="todo-title">関電 姫路: カルド林田町蓄電池 出力制限資料の再提出</div>
+          <div class="todo-meta"><span class="priority-normal">通常</span> 2025/12受信（長期） <span class="skip-label">対応不要</span></div>
+        </div>
+        <div class="todo-actions">
+          <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
+          <button class="todo-delete-btn" title="削除">&#x2715;</button>
+        </div>
+      </div>
+      <div class="todo-item" data-id="n10">
+        <div class="todo-check"></div>
+        <div class="todo-content">
+          <div class="todo-title">エナジートラスト 齋藤様: 壬生町529-1案件 役場回答の確認・返信</div>
+          <div class="todo-meta"><span class="priority-normal">通常</span> 1/14受信 <span class="skip-label">対応不要</span></div>
+        </div>
+        <div class="todo-actions">
+          <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
+          <button class="todo-delete-btn" title="削除">&#x2715;</button>
+        </div>
+      </div>
+      <div class="todo-item" data-id="n11">
+        <div class="todo-check"></div>
+        <div class="todo-content">
+          <div class="todo-title">中部電力PG 岡崎: 西尾市(BS) 引込柱確認＋敷地平面図修正</div>
+          <div class="todo-meta"><span class="priority-normal">通常</span> 2025/7月～（長期未回答） <span class="skip-label">対応不要</span></div>
+        </div>
+        <div class="todo-actions">
+          <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
+          <button class="todo-delete-btn" title="削除">&#x2715;</button>
+        </div>
+      </div>
+      <div class="todo-item" data-id="n12">
+        <div class="todo-check"></div>
+        <div class="todo-content">
+          <div class="todo-title">東電PG: 接続検討 再申込(257542 那須烏山) 記載不備の修正</div>
+          <div class="todo-meta"><span class="priority-normal">通常</span> 2025/9受信（長期） <span class="skip-label">対応不要</span></div>
+        </div>
+        <div class="todo-actions">
+          <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
+          <button class="todo-delete-btn" title="削除">&#x2715;</button>
+        </div>
+      </div>
+      <div class="todo-item" data-id="n13">
+        <div class="todo-check"></div>
+        <div class="todo-content">
+          <div class="todo-title">関電 羽曳野: オアンス駒ヶ谷蓄電所 接続検討の追加対応</div>
+          <div class="todo-meta"><span class="priority-normal">通常</span> 3/11受信 <span class="skip-label">対応不要</span></div>
+        </div>
+        <div class="todo-actions">
+          <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
+          <button class="todo-delete-btn" title="削除">&#x2715;</button>
+        </div>
+      </div>
+      <div class="todo-item" data-id="n14">
+        <div class="todo-check"></div>
+        <div class="todo-content">
+          <div class="todo-title">東電PG: 接続検討調査料 請求書（複数件）の支払確認</div>
+          <div class="todo-meta"><span class="priority-normal">通常</span> 2025/9-10月 <span class="skip-label">対応不要</span></div>
         </div>
         <div class="todo-actions">
           <button class="todo-skip-btn" title="対応不要">&#x23ED;</button>
@@ -926,16 +1373,16 @@
       </div>
     </div>
 
-    <!-- 追加タスク（音声入力で追加） -->
+    <!-- Added tasks (voice input) -->
     <div class="card" id="added-tasks-card" style="display:none;">
       <h2>追加タスク <span class="badge" id="added-count">0</span></h2>
       <div id="added-tasks-list"></div>
     </div>
   </div>
 
-  <!-- 右カラム -->
+  <!-- Right column -->
   <div>
-    <!-- 秘書プロフィール -->
+    <!-- Secretary profile -->
     <div class="card">
       <h2>あなたの秘書</h2>
       <div class="secretary-profile">
@@ -948,19 +1395,39 @@
       </div>
     </div>
 
-    <!-- 組織図リンク -->
-    <div class="card" style="cursor:pointer;" onclick="window.location.href='org.html'">
+    <!-- Org chart link -->
+    <div class="card" style="cursor:pointer;" onclick="window.location.href='org-chart.html'">
       <h2>組織図・メンバー紹介</h2>
       <div style="display:flex;align-items:center;gap:12px;padding:8px 0;">
         <div style="font-size:28px;">&#x1F3E2;</div>
         <div>
-          <div style="font-size:14px;font-weight:600;">12部門 43名体制</div>
-          <div style="font-size:12px;color:var(--text-muted);">部長12名＋課長31名のプロフィールを見る →</div>
+          <div style="font-family:var(--font-data);font-size:13px;font-weight:600;letter-spacing:0.5px;">12部門 44名体制</div>
+          <div style="font-size:12px;color:var(--text-muted);">部長12名＋課長32名のプロフィールを見る →</div>
         </div>
       </div>
     </div>
 
-    <!-- desknet's チェック -->
+    <!-- Google Drive Links -->
+    <div class="card">
+      <h2>&#x1F4C1; Google Drive</h2>
+      <a class="drive-link-item" href="https://drive.google.com/drive/u/0/folders/1f0p4NkDyOzZyGO3LxkrK1GpIZTE1Pt_A" target="_blank">
+        <div class="drive-icon">&#x1F4C2;</div>
+        <div class="drive-name">440LLCプロジェクトフォルダ（ルート）</div>
+        <div class="drive-arrow">OPEN &#x2197;</div>
+      </a>
+      <a class="drive-link-item" href="https://drive.google.com/drive/u/0/folders/1f0p4NkDyOzZyGO3LxkrK1GpIZTE1Pt_A" target="_blank">
+        <div class="drive-icon">&#x1F4DC;</div>
+        <div class="drive-name">CLAUDE.md（組織ルール）</div>
+        <div class="drive-arrow">OPEN &#x2197;</div>
+      </a>
+      <a class="drive-link-item" href="https://drive.google.com/drive/u/0/folders/1f0p4NkDyOzZyGO3LxkrK1GpIZTE1Pt_A" target="_blank">
+        <div class="drive-icon">&#x1F5C2;&#xFE0F;</div>
+        <div class="drive-name">secretary/todos/（TODOファイル）</div>
+        <div class="drive-arrow">OPEN &#x2197;</div>
+      </a>
+    </div>
+
+    <!-- desknet's check -->
     <div class="card">
       <h2>desknet's 確認</h2>
       <div class="desknet-check">
@@ -980,39 +1447,61 @@
           <div class="desknet-status pending" data-type="check">未確認</div>
         </div>
       </div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:10px;">タップで確認済みに切替</div>
+      <div style="font-family:var(--font-data);font-size:10px;color:var(--text-muted);margin-top:10px;letter-spacing:0.5px;">タップで確認済みに切替</div>
     </div>
 
-    <!-- 自動更新スケジュール -->
+    <!-- Auto update schedule -->
     <div class="card">
-      <h2>🤖 自動更新スケジュール</h2>
-      <div style="display:flex;flex-direction:column;gap:10px;">
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(56,189,248,0.08);border-radius:8px;border-left:3px solid var(--accent);">
-          <div style="font-size:20px;">🌅</div>
+      <h2>自動更新スケジュール</h2>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(0,212,255,0.04);border-radius:6px;border-left:2px solid var(--accent);">
+          <div style="font-size:18px;">&#x1F305;</div>
           <div>
-            <div style="font-weight:600;font-size:13px;">朝スキャン</div>
+            <div style="font-family:var(--font-data);font-weight:600;font-size:11px;letter-spacing:1px;color:var(--accent);">朝スキャン</div>
             <div style="font-size:11px;color:var(--text-muted);">毎日 8:00 — Gmail未返信チェック・TODO更新・FX確認</div>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(74,222,128,0.08);border-radius:8px;border-left:3px solid var(--green);">
-          <div style="font-size:20px;">🔄</div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(0,230,118,0.04);border-radius:6px;border-left:2px solid var(--green);">
+          <div style="font-size:18px;">&#x1F504;</div>
           <div>
-            <div style="font-weight:600;font-size:13px;">昼スキャン</div>
+            <div style="font-family:var(--font-data);font-weight:600;font-size:11px;letter-spacing:1px;color:var(--green);">昼スキャン</div>
             <div style="font-size:11px;color:var(--text-muted);">毎日 12:00 — 午前の進捗確認・新着メール・スケジュール更新</div>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(251,146,60,0.08);border-radius:8px;border-left:3px solid var(--orange);">
-          <div style="font-size:20px;">🌆</div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,184,0,0.04);border-radius:6px;border-left:2px solid var(--orange);">
+          <div style="font-size:18px;">&#x1F306;</div>
           <div>
-            <div style="font-weight:600;font-size:13px;">夕方スキャン</div>
+            <div style="font-family:var(--font-data);font-weight:600;font-size:11px;letter-spacing:1px;color:var(--orange);">夕方スキャン</div>
             <div style="font-size:11px;color:var(--text-muted);">毎日 18:00 — 未完了確認・期限アラート・翌日プレビュー</div>
           </div>
         </div>
       </div>
-      <div id="last-update-log" style="font-size:11px;color:var(--text-muted);margin-top:10px;padding-top:8px;border-top:1px solid var(--border);">最終更新: 2026/03/24 19:30 Gmail・カレンダースキャン完了</div>
+      <div id="last-update-log" style="font-family:var(--font-data);font-size:10px;color:var(--text-muted);margin-top:10px;padding-top:8px;border-top:1px solid var(--border);letter-spacing:0.5px;">最終更新: 2026/04/22 18:00 夕方スキャン完了 — Gmail31件/下書き確認/FX翌日予定/カレンダー同期</div>
     </div>
 
-    <!-- 下書きメール -->
+    <!-- TimeTree Sync Status -->
+    <div class="card">
+      <h2>&#x1F501; TimeTree 連携ステータス</h2>
+      <div class="sync-row">
+        <div class="sync-label">timetree_sync.py</div>
+        <div class="sync-badge ok">稼働中</div>
+      </div>
+      <div class="sync-row">
+        <div class="sync-label">定期実行（1時間毎）</div>
+        <div class="sync-badge ok">スケジュール済</div>
+      </div>
+      <div class="sync-row">
+        <div class="sync-label">認証情報管理</div>
+        <div class="sync-badge warn">検討中</div>
+      </div>
+      <div class="sync-row">
+        <div class="sync-label">同期失敗アラート</div>
+        <div class="sync-badge pending">実装中</div>
+      </div>
+      <div style="font-family:var(--font-data);font-size:10px;color:var(--text-muted);margin-top:10px;padding-top:8px;border-top:1px solid var(--border);letter-spacing:0.5px;">テック部 桐生翔・月城陸・香坂ひかり 対応中 | 詳細: tech/tasks/2026-03-24-timetree-sync-ops.md</div>
+    </div>
+
+    <!-- Draft emails -->
     <div class="card">
       <h2>下書きメール <span class="badge">3</span></h2>
       <div class="draft-item">
@@ -1032,50 +1521,42 @@
       </div>
     </div>
 
-    <!-- 期限一覧 -->
+    <!-- Deadline calendar -->
     <div class="card">
       <h2>期限カレンダー</h2>
       <div class="timeline">
         <div class="timeline-item urgent">
-          <div class="timeline-date">3/23 (月)</div>
-          <div class="timeline-text">使用前自己確認届出書 提出 / WARP処理 / 高山出張</div>
+          <div class="timeline-date" id="timeline-today">本日 4/21</div>
+          <div class="timeline-text">名義変更3件 超過中 / TimeTree連携テック対応中</div>
         </div>
-        <div class="timeline-item">
-          <div class="timeline-date">3/23 (月)</div>
-          <div class="timeline-text">丸越商事訪問 → 会食（あじ平）</div>
-        </div>
-        <div class="timeline-item">
-          <div class="timeline-date">3/24 (火)</div>
-          <div class="timeline-text">大前さん訪問 / 永山医院</div>
-        </div>
-        <div class="timeline-item">
-          <div class="timeline-date">3/25 (水)</div>
-          <div class="timeline-text">税務署 / スターティア来社 / 學AIミーティング</div>
-        </div>
-        <div class="timeline-item">
-          <div class="timeline-date">3/26 (木)</div>
-          <div class="timeline-text">蓄電池土地打ち合わせ</div>
-        </div>
-        <div class="timeline-item">
-          <div class="timeline-date">3/30 (月)</div>
-          <div class="timeline-text">イーエール&GRITZ 会議</div>
-        </div>
-        <div class="timeline-item">
-          <div class="timeline-date">4月中旬</div>
-          <div class="timeline-text">ゲンマ 様式6 提出</div>
-        </div>
-        <div class="timeline-item">
+        <div class="timeline-item urgent">
           <div class="timeline-date">4/23 (木)</div>
           <div class="timeline-text">KMSY会 / ゴルフ会</div>
         </div>
         <div class="timeline-item">
-          <div class="timeline-date">4/27 (日)</div>
-          <div class="timeline-text">クローバーテクノロジー10周年（リッツカールトン）</div>
+          <div class="timeline-date">4/24 (金)</div>
+          <div class="timeline-text">FX ゴトー日 — ユロ円・ドル円買い / 月末売り</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">4/28 (火)</div>
+          <div class="timeline-text">クローバーテクノロジー10周年パーティー（リッツカールトン）06:30</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">4/30 (木)</div>
+          <div class="timeline-text">FX 月末売り / 月末締め対応</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">5月上旬</div>
+          <div class="timeline-text">TimeTree連携テック対応 完了目標 / auRE名変完了目標</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">6/3 (水)</div>
+          <div class="timeline-text">甲子園 西武戦（山本家4枚）18:00</div>
         </div>
       </div>
     </div>
 
-    <!-- auRE ステータス -->
+    <!-- auRE status -->
     <div class="card">
       <h2>auRE 名義変更ステータス</h2>
       <div class="dept-list">
@@ -1097,59 +1578,71 @@
         </div>
       </div>
       <div style="margin-top:12px; text-align:center;">
-        <div style="background:var(--border);border-radius:8px;height:10px;overflow:hidden;">
+        <div style="background:var(--border);border-radius:4px;height:8px;overflow:hidden;">
           <div style="display:flex;height:100%;">
-            <div style="width:8.3%;background:var(--green);"></div>
-            <div style="width:37.5%;background:var(--accent);"></div>
-            <div style="width:41.7%;background:var(--yellow);"></div>
-            <div style="width:12.5%;background:var(--red);"></div>
+            <div style="width:8.3%;background:var(--green);box-shadow:0 0 8px rgba(0,230,118,0.4);"></div>
+            <div style="width:37.5%;background:var(--accent);box-shadow:0 0 8px rgba(0,212,255,0.3);"></div>
+            <div style="width:41.7%;background:var(--yellow);box-shadow:0 0 8px rgba(255,184,0,0.3);"></div>
+            <div style="width:12.5%;background:var(--red);box-shadow:0 0 8px rgba(255,59,92,0.3);"></div>
           </div>
         </div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">全体進捗: 8.3% 完了</div>
+        <div style="font-family:var(--font-data);font-size:10px;color:var(--text-muted);margin-top:6px;letter-spacing:0.5px;">全体進捗: 8.3% 完了</div>
       </div>
     </div>
 
-    <!-- FX LogiQueen カレンダー -->
+    <!-- FX LogiQueen calendar -->
     <div class="card">
       <h2>FX LogiQueen <span class="badge" style="background:var(--yellow);color:#000;">きすけ式</span></h2>
       <div id="fx-today" style="margin-bottom:10px;">
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;" id="fx-today-label">本日</div>
-        <div style="font-size:13px;color:var(--text-muted);padding:10px;background:rgba(255,255,255,0.03);border-radius:8px;text-align:center;">予定なし</div>
+        <div style="font-family:var(--font-data);font-size:11px;color:var(--text-muted);margin-bottom:8px;letter-spacing:0.5px;" id="fx-today-label">本日</div>
+        <div style="font-family:var(--font-data);font-size:12px;color:var(--text-muted);padding:10px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:6px;text-align:center;letter-spacing:0.5px;">予定なし</div>
       </div>
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">今後の予定</div>
+      <div style="font-family:var(--font-data);font-size:10px;color:var(--text-muted);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;">今後の予定（4月末）</div>
       <div class="dept-list">
         <div class="dept-item">
           <div>
-            <div class="dept-name" style="color:var(--yellow);">ドル円月末売り(ゴトー日なし)</div>
-            <div style="font-size:11px;color:var(--text-muted);">3/23 (月) 8:04〜15:00 | LC350pips</div>
-          </div>
-        </div>
-        <div class="dept-item">
-          <div>
-            <div class="dept-name" style="color:var(--yellow);">ドル円月末売り(ゴトー日なし)</div>
-            <div style="font-size:11px;color:var(--text-muted);">3/24 (火) 8:04〜15:00 | LC350pips</div>
+            <div class="dept-name" style="color:var(--yellow);">ドル円月末売り(ゴトー日なし) ★明日</div>
+            <div style="font-family:var(--font-data);font-size:10px;color:var(--text-muted);letter-spacing:0.3px;">4/23 (木) 8:04〜15:00 | LC350pips</div>
           </div>
         </div>
         <div class="dept-item">
           <div>
             <div class="dept-name" style="color:var(--green);">ユロ円ゴトー日買い</div>
-            <div style="font-size:11px;color:var(--text-muted);">3/25 (水) 0:00〜9:54 | LC400pips</div>
+            <div style="font-family:var(--font-data);font-size:10px;color:var(--text-muted);letter-spacing:0.3px;">4/24 (金) 0:00〜9:54 | LC400pips</div>
           </div>
         </div>
         <div class="dept-item">
           <div>
             <div class="dept-name" style="color:var(--accent);">ドル円ゴトー日買い</div>
-            <div style="font-size:11px;color:var(--text-muted);">3/25 (水) 0:00〜9:54 | LC450pips</div>
+            <div style="font-family:var(--font-data);font-size:10px;color:var(--text-muted);letter-spacing:0.3px;">4/24 (金) 0:00〜9:54 | LC450pips</div>
           </div>
         </div>
         <div class="dept-item">
           <div>
             <div class="dept-name" style="color:var(--yellow);">ドル円月末売り(ゴトー日のみ)</div>
-            <div style="font-size:11px;color:var(--text-muted);">3/25 (水) 9:54〜15:00 | LC300pips</div>
+            <div style="font-family:var(--font-data);font-size:10px;color:var(--text-muted);letter-spacing:0.3px;">4/24 (金) 9:54〜15:00 | LC300pips</div>
+          </div>
+        </div>
+        <div class="dept-item">
+          <div>
+            <div class="dept-name" style="color:var(--yellow);">ドル円月末売り(ゴトー日なし)</div>
+            <div style="font-family:var(--font-data);font-size:10px;color:var(--text-muted);letter-spacing:0.3px;">4/27 (月) 8:04〜15:00 | LC350pips</div>
+          </div>
+        </div>
+        <div class="dept-item">
+          <div>
+            <div class="dept-name" style="color:var(--yellow);">ドル円月末売り(ゴトー日なし)</div>
+            <div style="font-family:var(--font-data);font-size:10px;color:var(--text-muted);letter-spacing:0.3px;">4/28 (火) 8:04〜15:00 | LC350pips</div>
+          </div>
+        </div>
+        <div class="dept-item">
+          <div>
+            <div class="dept-name" style="color:var(--yellow);">ドル円月末売り(ゴトー日なし)</div>
+            <div style="font-family:var(--font-data);font-size:10px;color:var(--text-muted);letter-spacing:0.3px;">4/30 (木) 8:04〜15:00 | LC350pips</div>
           </div>
         </div>
       </div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:10px;">資金管理: リスクは資金の3%</div>
+      <div style="font-family:var(--font-data);font-size:10px;color:var(--text-muted);margin-top:10px;letter-spacing:0.5px;">資金管理: リスクは資金の3%</div>
     </div>
   </div>
 </div>
@@ -1157,12 +1650,12 @@
 </div><!-- /content -->
 
 <div class="footer">
-  <div>440LLC ダッシュボード v1.1 | 最終更新: <span id="generated"></span></div>
+  <div>440LLC DASHBOARD v2.1 | LAST UPDATE: <span id="generated"></span></div>
   <div>更新方法: 「ダッシュボード更新して」と話しかけてください</div>
 </div>
 
 <script>
-// 時計
+// Clock
 function updateClock() {
   const now = new Date();
   const opts = { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false, timeZone:'Asia/Tokyo' };
@@ -1172,7 +1665,7 @@ updateClock();
 setInterval(updateClock, 1000);
 document.getElementById('generated').textContent = new Date().toLocaleString('ja-JP', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', timeZone:'Asia/Tokyo' });
 
-// 日付表示
+// Date display
 const now = new Date();
 const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
 const month = now.getMonth() + 1;
@@ -1181,7 +1674,7 @@ const wd = weekdays[now.getDay()];
 document.getElementById('hero-date').textContent = month + '月' + day + '日';
 document.getElementById('hero-weekday').textContent = now.getFullYear() + '年 ' + wd + '曜日';
 
-// 日替わりリラックス写真
+// Daily scenic photo rotation
 const scenicPhotos = [
   { id: 1287145, title: '緑の丘陵', location: 'Tuscany, Italy' },
   { id: 2662116, title: '夕焼けのビーチ', location: 'Maldives' },
@@ -1220,7 +1713,7 @@ const todayPhoto = scenicPhotos[dayOfYear % scenicPhotos.length];
 document.getElementById('hero-img').src = 'https://images.pexels.com/photos/' + todayPhoto.id + '/pexels-photo-' + todayPhoto.id + '.jpeg?auto=compress&cs=tinysrgb&w=1200&h=500&fit=crop';
 document.getElementById('hero-location').textContent = todayPhoto.title + ' - ' + todayPhoto.location;
 
-// 秘書の日替わりメッセージ
+// Secretary daily message
 const secretaryMsgs = [
   '今日も一緒に頑張りましょう！',
   'いつでも何でも聞いてくださいね。',
@@ -1232,7 +1725,7 @@ const secretaryMsgs = [
 ];
 document.getElementById('secretary-msg').textContent = '"' + secretaryMsgs[dayOfYear % secretaryMsgs.length] + '"';
 
-// 褒め言葉リスト
+// Praise messages
 const praiseList = [
   { emoji: '\uD83C\uDF89', text: 'お見事です！', sub: 'さすがの仕事っぷりですね！' },
   { emoji: '\uD83D\uDE80', text: 'ナイス完了！', sub: '着実に前進しています！' },
@@ -1244,9 +1737,9 @@ const praiseList = [
   { emoji: '\uD83D\uDC4F', text: 'ブラボー！', sub: '仕事が早い！' },
 ];
 
-// 紙吹雪
+// Confetti
 function launchConfetti() {
-  const colors = ['#f87171','#38bdf8','#4ade80','#facc15','#fb923c','#a78bfa','#f472b6'];
+  const colors = ['#ff3b5c','#00d4ff','#00e676','#ffb800','#ff6b35','#a78bfa','#f472b6'];
   for (let i = 0; i < 40; i++) {
     const el = document.createElement('div');
     el.className = 'confetti';
@@ -1262,7 +1755,7 @@ function launchConfetti() {
   }
 }
 
-// 褒めポップアップ
+// Praise popup
 function showPraise() {
   const p = praiseList[Math.floor(Math.random() * praiseList.length)];
   const overlay = document.createElement('div');
@@ -1286,28 +1779,23 @@ function showPraise() {
   setTimeout(dismiss, 2500);
 }
 
-// === localStorage 永続化 ===
+// === localStorage persistence ===
 const STORAGE_KEY = '440llc-dashboard-state';
 
 function saveState() {
   const state = { done: [], skipped: [], deleted: [], moved: [], added: [], desknet: [] };
-  // 完了
   document.querySelectorAll('.todo-item.completed').forEach(el => {
     if (el.dataset.id) state.done.push(el.dataset.id);
   });
-  // スキップ（グレーアウト）
   document.querySelectorAll('.todo-item.skipped').forEach(el => {
     if (el.dataset.id) state.skipped.push(el.dataset.id);
   });
-  // 削除
   document.querySelectorAll('.todo-item[style*="display: none"]').forEach(el => {
     if (el.dataset.id) state.deleted.push(el.dataset.id);
   });
-  // 最優先→通常に移動されたもの
   document.querySelectorAll('#normal-tasks .todo-item[data-id^="u"]').forEach(el => {
     state.moved.push(el.dataset.id);
   });
-  // 追加タスク
   document.querySelectorAll('#added-tasks-list .todo-item').forEach(el => {
     state.added.push({
       id: el.dataset.id,
@@ -1317,7 +1805,6 @@ function saveState() {
       skipped: el.classList.contains('skipped')
     });
   });
-  // desknet's
   document.querySelectorAll('.desknet-status').forEach((el, i) => {
     state.desknet.push(el.classList.contains('ok'));
   });
@@ -1329,7 +1816,6 @@ function restoreState() {
   if (!raw) return;
   const state = JSON.parse(raw);
 
-  // 移動（最優先→通常）
   (state.moved || []).forEach(id => {
     const item = document.querySelector('[data-id="' + id + '"]');
     if (item) {
@@ -1342,7 +1828,6 @@ function restoreState() {
     }
   });
 
-  // 完了
   (state.done || []).forEach(id => {
     const item = document.querySelector('[data-id="' + id + '"]');
     if (item) {
@@ -1352,7 +1837,6 @@ function restoreState() {
     }
   });
 
-  // スキップ
   (state.skipped || []).forEach(id => {
     const item = document.querySelector('[data-id="' + id + '"]');
     if (item) {
@@ -1362,13 +1846,11 @@ function restoreState() {
     }
   });
 
-  // 削除
   (state.deleted || []).forEach(id => {
     const item = document.querySelector('[data-id="' + id + '"]');
     if (item) item.style.display = 'none';
   });
 
-  // 追加タスク
   if (state.added && state.added.length > 0) {
     const card = document.getElementById('added-tasks-card');
     const list = document.getElementById('added-tasks-list');
@@ -1391,7 +1873,6 @@ function restoreState() {
     document.getElementById('added-count').textContent = list.children.length;
   }
 
-  // desknet's
   (state.desknet || []).forEach((isOk, i) => {
     const statuses = document.querySelectorAll('.desknet-status');
     if (statuses[i] && isOk) {
@@ -1404,7 +1885,7 @@ function restoreState() {
 
 restoreState();
 
-// 統計更新
+// Stats update
 function updateStats() {
   const allItems = document.querySelectorAll('.todo-item:not([style*="display: none"])');
   const doneItems = document.querySelectorAll('.todo-item:not([style*="display: none"]) .todo-check.done');
@@ -1417,7 +1898,6 @@ function updateStats() {
     statValue.className = active === 0 ? 'value green' : 'value red';
   }
 
-  // 全完了チェック
   if (active === 0 && allItems.length > 0) {
     setTimeout(() => {
       const overlay = document.createElement('div');
@@ -1443,7 +1923,7 @@ function updateStats() {
   }
 }
 
-// チェックボックスイベント登録
+// Checkbox event binding
 function bindTodoEvents() {
   document.querySelectorAll('.todo-check').forEach(check => {
     if (check.dataset.bound) return;
@@ -1463,7 +1943,6 @@ function bindTodoEvents() {
     });
   });
 
-  // 対応不要ボタン
   document.querySelectorAll('.todo-skip-btn').forEach(btn => {
     if (btn.dataset.bound) return;
     btn.dataset.bound = '1';
@@ -1474,7 +1953,6 @@ function bindTodoEvents() {
       const isUrgent = parentCard && parentCard.id === 'urgent-tasks';
 
       if (isUrgent) {
-        // 最優先 → 通常タスクへ移動
         item.classList.add('moving');
         const priorityBadge = item.querySelector('.priority-high');
         if (priorityBadge) {
@@ -1492,7 +1970,6 @@ function bindTodoEvents() {
           saveState();
         }, 400);
       } else {
-        // 通常タスク → グレーアウト
         item.classList.add('skipped');
         const label = item.querySelector('.skip-label');
         if (label) label.style.display = 'inline-block';
@@ -1502,7 +1979,6 @@ function bindTodoEvents() {
     });
   });
 
-  // 削除ボタン
   document.querySelectorAll('.todo-delete-btn').forEach(btn => {
     if (btn.dataset.bound) return;
     btn.dataset.bound = '1';
@@ -1523,7 +1999,7 @@ function bindTodoEvents() {
 }
 bindTodoEvents();
 
-// 音声入力
+// Voice input
 const voiceBtn = document.getElementById('voice-btn');
 const voiceInput = document.getElementById('voice-input');
 const voiceStatus = document.getElementById('voice-status');
@@ -1573,7 +2049,7 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   voiceBtn.title = 'このブラウザは音声入力に対応していません';
 }
 
-// タスク追加
+// Add task
 function addTask(text) {
   if (!text.trim()) return;
   const card = document.getElementById('added-tasks-card');
@@ -1610,32 +2086,35 @@ voiceInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') addTask(voiceInput.value);
 });
 
-// TimeTree「ひろコンビ」スケジュール表示
+// TimeTree schedule display
 (function() {
   const ttEvents = [
-    { date: '2026-03-23', time: '終日', title: '3760 3764 WARP処理', allDay: true },
-    { date: '2026-03-23', time: '終日', title: '3138 使用前自己確認 善久さん返信', allDay: true },
-    { date: '2026-03-23', time: '14:30', title: '丸越商事訪問', allDay: false },
-    { date: '2026-03-24', time: '09:00', title: '大前さん訪問', allDay: false },
-    { date: '2026-03-24', time: '16:30', title: '永山医院', allDay: false },
-    { date: '2026-03-25', time: '終日', title: '税務署', allDay: true },
-    { date: '2026-03-25', time: '10:30', title: '橋本さん（スターティア）来社', allDay: false },
-    { date: '2026-03-25', time: '18:00', title: '太陽光ナレッジミーティング（學AI）', allDay: false },
-    { date: '2026-03-25', time: '18:00', title: '内君会食', allDay: false },
-    { date: '2026-03-26', time: '11:00', title: '蓄電池土地打ち合わせ', allDay: false },
-    { date: '2026-03-27', time: '18:00', title: 'アチーブメント', allDay: false },
-    { date: '2026-03-31', time: '13:00', title: 'ナレッジ共有会', allDay: false },
-    { date: '2026-04-02', time: '終日', title: 'JPNカップ', allDay: true },
-    { date: '2026-04-17', time: '18:00', title: 'スタジオ（アンマミエヘン）', allDay: false },
-    { date: '2026-04-23', time: '終日', title: 'ゴルフ会', allDay: true },
-    { date: '2026-04-28', time: '06:30', title: 'クローバーテクノロジー10周年パーティー', allDay: false },
+    { date: '2026-04-22', time: '終日', title: '小規模事業者gBiz登録', allDay: true },
+    { date: '2026-04-22', time: '10:00', title: '商工会議所今井さん訪問', allDay: false },
+    { date: '2026-04-23', time: '終日', title: 'KMSY会', allDay: true },
+    { date: '2026-04-23', time: '終日', title: 'いつものゴルフ会', allDay: true },
+    { date: '2026-04-23', time: '08:04', title: 'FX ドル円月末売り(ゴトー日なし) 〜15:00 LC350pips', allDay: false },
+    { date: '2026-04-24', time: '00:00', title: 'FX ゴトー日 — ユロ円・ドル円買い', allDay: false },
+    { date: '2026-04-27', time: '終日', title: 'AI台帳くんリリース', allDay: true },
+    { date: '2026-04-27', time: '21:30', title: 'クローバーテクノロジー10周年パーティー（リッツカールトン大阪）', allDay: false },
+    { date: '2026-04-28', time: '13:30', title: 'ランチミーティング 阪神阪急', allDay: false },
+    { date: '2026-04-28', time: '17:00', title: '西出さん打ち合わせ＆晩御飯（なんば）', allDay: false },
+    { date: '2026-04-30', time: '16:30', title: '税理士来社', allDay: false },
+    { date: '2026-04-30', time: '終日', title: 'FX 月末売り / 月末締め対応', allDay: true },
+    { date: '2026-05-01', time: '14:00', title: '蓄電池土地MTG / 蓄電池打ち合わせ', allDay: false },
+    { date: '2026-05-02', time: '終日', title: 'GW', allDay: true },
+    { date: '2026-05-04', time: '終日', title: '東家会食（チーズミートガーデン梅田）', allDay: true },
+    { date: '2026-05-07', time: '20:00', title: 'スタジオ（アンマミエヘン）', allDay: false },
+    { date: '2026-05-09', time: '終日', title: '増田家田植え', allDay: true },
+    { date: '2026-05-19', time: '終日', title: '★神戸町 供給承諾回答予定日', allDay: true },
+    { date: '2026-06-01', time: '終日', title: '⚠️ Adobe動画 解約期限', allDay: true },
     { date: '2026-06-03', time: '18:00', title: '甲子園 西武戦（山本家4枚）', allDay: false },
+    { date: '2026-06-08', time: '終日', title: '★荘川 供給承諾回答予定', allDay: true },
   ];
   const today = new Date().toISOString().slice(0, 10);
   const todayEvents = ttEvents.filter(e => e.date === today);
   const futureEvents = ttEvents.filter(e => e.date > today).slice(0, 7);
 
-  // 今日のスケジュール
   const scheduleList = document.getElementById('schedule-list');
   const scheduleCount = document.getElementById('schedule-count');
   if (scheduleCount) scheduleCount.textContent = todayEvents.length;
@@ -1648,7 +2127,6 @@ voiceInput.addEventListener('keydown', (e) => {
     ).join('');
   }
 
-  // 今後の予定
   const upcomingList = document.getElementById('upcoming-list');
   if (upcomingList && futureEvents.length > 0) {
     const grouped = {};
@@ -1661,7 +2139,7 @@ voiceInput.addEventListener('keydown', (e) => {
       const d = new Date(date + 'T00:00:00+09:00');
       const days = ['日','月','火','水','木','金','土'];
       const label = (d.getMonth()+1) + '/' + d.getDate() + '（' + days[d.getDay()] + '）';
-      html += '<div style="font-size:11px;color:var(--accent);margin-top:6px;font-weight:600;">' + label + '</div>';
+      html += '<div style="font-family:var(--font-data);font-size:11px;color:var(--accent);margin-top:8px;font-weight:600;letter-spacing:1px;">' + label + '</div>';
       grouped[date].forEach(e => {
         html += '<div class="schedule-item" style="padding:5px 0;">' +
           '<div class="schedule-time">' + (e.allDay ? '<span class="schedule-allday">終日</span>' : e.time) + '</div>' +
@@ -1673,7 +2151,7 @@ voiceInput.addEventListener('keydown', (e) => {
   }
 })();
 
-// 動的日付表示
+// Dynamic date display
 (function() {
   const now = new Date();
   const m = now.getMonth() + 1;
@@ -1684,16 +2162,16 @@ voiceInput.addEventListener('keydown', (e) => {
   if (fxLabel) fxLabel.textContent = '本日 (' + m + '/' + d + ')';
 })();
 
-// FX LogiQueen 当日トレード数
+// FX LogiQueen today's trade count
 (function() {
   const fxEvents = [
-    { date: '2026-03-23', summary: 'ドル円月末売り(ゴトー日なし)' },
-    { date: '2026-03-24', summary: 'ドル円月末売り(ゴトー日なし)' },
-    { date: '2026-03-25', summary: 'ユロ円ゴトー日買い' },
-    { date: '2026-03-25', summary: 'ドル円ゴトー日買い' },
-    { date: '2026-03-25', summary: 'ドル円月末売り(ゴトー日のみ)' },
-    { date: '2026-03-26', summary: 'ドル円月末売り(ゴトー日なし)' },
-    { date: '2026-03-27', summary: 'ドル円月末売り(ゴトー日なし)' },
+    { date: '2026-04-23', summary: 'ドル円月末売り(ゴトー日なし)' },
+    { date: '2026-04-24', summary: 'ユロ円ゴトー日買い' },
+    { date: '2026-04-24', summary: 'ドル円ゴトー日買い' },
+    { date: '2026-04-24', summary: 'ドル円月末売り(ゴトー日のみ)' },
+    { date: '2026-04-27', summary: 'ドル円月末売り(ゴトー日なし)' },
+    { date: '2026-04-28', summary: 'ドル円月末売り(ゴトー日なし)' },
+    { date: '2026-04-30', summary: 'ドル円月末売り(ゴトー日なし)' },
   ];
   const today = new Date().toISOString().slice(0, 10);
   const todayTrades = fxEvents.filter(e => e.date === today);
@@ -1711,17 +2189,16 @@ voiceInput.addEventListener('keydown', (e) => {
   }
 })();
 
-// 更新ボタン
+// Refresh button
 document.getElementById('refresh-btn').addEventListener('click', function() {
   this.classList.add('spinning');
-  // 更新時刻を記録
   localStorage.setItem('440llc-last-update', new Date().toISOString());
   setTimeout(() => {
     location.reload();
   }, 500);
 });
 
-// 最終更新時刻の表示
+// Last update time display
 (function() {
   const logEl = document.getElementById('last-update-log');
   const lastUpdate = localStorage.getItem('440llc-last-update');
@@ -1732,7 +2209,7 @@ document.getElementById('refresh-btn').addEventListener('click', function() {
   }
 })();
 
-// desknet's チェック切替
+// desknet's check toggle
 function toggleDesknet(el) {
   const status = el.querySelector('.desknet-status');
   if (status.classList.contains('pending')) {
@@ -1747,7 +2224,7 @@ function toggleDesknet(el) {
   saveState();
 }
 
-// プルトゥリフレッシュ（iOS PWA対応）
+// Pull to refresh (iOS PWA)
 (function() {
   var startY = 0;
   var currentY = 0;
